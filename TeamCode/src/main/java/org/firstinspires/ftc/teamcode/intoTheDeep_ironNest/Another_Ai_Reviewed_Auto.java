@@ -3,10 +3,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-@Autonomous(name = "AI? auto")
-
-
-
 
     public class Another_Ai_Reviewed_Auto extends LinearOpMode {
         private DcMotor sliders;

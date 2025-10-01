@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="IronAutoHumanPlayerblue")
+
 
 public class auto2blue extends LinearOpMode {
     @Override

@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.terrence;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Controller;
+import org.firstinspires.ftc.teamcode.util.control.Controller;
 import org.firstinspires.ftc.teamcode.hardware.Gyro;
 import org.firstinspires.ftc.teamcode.hardware.drive.DifferentialDrive;
 

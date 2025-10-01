@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.PIDController;
+import org.firstinspires.ftc.teamcode.util.control.PIDController;
 import org.firstinspires.ftc.teamcode.hardware.BaseHardware;
 import org.firstinspires.ftc.teamcode.hardware.Gyro;
 import org.firstinspires.ftc.teamcode.hardware.drive.odometry.OdometryGlobalCoordinatePosition;

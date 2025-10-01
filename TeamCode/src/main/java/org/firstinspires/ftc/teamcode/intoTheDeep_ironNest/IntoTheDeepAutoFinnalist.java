@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-@Autonomous(name = "Finalist Auto")
+
 public class IntoTheDeepAutoFinnalist extends  LinearOpMode {
     DcMotor sliders;
     Servo secondaryArm;

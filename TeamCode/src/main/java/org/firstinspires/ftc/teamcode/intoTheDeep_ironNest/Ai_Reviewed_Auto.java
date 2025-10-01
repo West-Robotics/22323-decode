@@ -13,8 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /** @noinspection FieldCanBeLocal*/
-@Config
-@Autonomous(name = " AI auto")
+
     public class Ai_Reviewed_Auto extends LinearOpMode {
         private DcMotor sliders;
         private Servo secondaryArm;

@@ -1,16 +1,10 @@
 package org.firstinspires.ftc.teamcode.node.util;
 
-import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.Controller;
 import org.firstinspires.ftc.teamcode.node.Node;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class GamepadNode extends Node {
     private Gamepad gamepad;

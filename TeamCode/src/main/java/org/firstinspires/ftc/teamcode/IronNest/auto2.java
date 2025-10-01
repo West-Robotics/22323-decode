@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="IronAutoBackDrop")
+
 
 public class auto2 extends LinearOpMode {
     @Override

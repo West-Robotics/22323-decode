@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Controller;
+import org.firstinspires.ftc.teamcode.util.control.Controller;
 
 @TeleOp
 public class orientationTeleOp extends LinearOpMode {

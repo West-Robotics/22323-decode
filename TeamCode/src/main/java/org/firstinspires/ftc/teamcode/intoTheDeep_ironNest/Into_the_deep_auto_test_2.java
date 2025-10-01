@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-@Autonomous(name = "Maybe even better auto?")
+
 public class Into_the_deep_auto_test_2 extends LinearOpMode{
     DcMotor sliders;
     Servo secondaryArm;

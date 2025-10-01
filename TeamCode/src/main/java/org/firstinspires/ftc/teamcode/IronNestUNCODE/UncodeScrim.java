@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Controller;
+import org.firstinspires.ftc.teamcode.util.control.Controller;
 @Config
 @TeleOp(name="Scrimtele")
 public class UncodeScrim extends LinearOpMode{
