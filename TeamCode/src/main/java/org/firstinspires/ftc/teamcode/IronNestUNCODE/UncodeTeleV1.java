@@ -14,11 +14,15 @@ public class UncodeTeleV1 extends LinearOpMode{
             // Initialize the hardware variables. Note that the strings used here must correspond
             // to the names assigned during the robot configuration step on the DS or RC devices.
             DcMotor FL = hardwareMap.get(DcMotor.class, "FrontL");
+
             DcMotor FR = hardwareMap.get(DcMotor.class, "FrontR");
             DcMotor BR = hardwareMap.get(DcMotor.class, "BackR");
             DcMotor BL = hardwareMap.get(DcMotor.class, "BackL");
             Servo liftL = hardwareMap.get(Servo.class, "LiftL");
             Servo lift2 = hardwareMap.get(Servo.class, "LiftR");
+            DcMotor In = hardwareMap.get(DcMotor.class, "intake");
+            DcMotor OutL = hardwareMap.get(DcMotor.class, "outtakeL");
+            DcMotor OutR = hardwareMap.get(DcMotor.class, "outtakeR");
             Controller Gamepad1 = new Controller(gamepad1);
             waitForStart();
 
@@ -36,6 +40,14 @@ public class UncodeTeleV1 extends LinearOpMode{
                     liftL.setPosition(0.9);
                     lift2.setPosition(0.1);
                 }
+                if(gamepad1.right_bumper){
+                    In.setPower(-1);
+                }
+                if(gamepad1.right_trigger>0.5){
+                    OutL.setPower(1);
+                    OutR.setPower(-1);
+                }
+
 
 
             }
