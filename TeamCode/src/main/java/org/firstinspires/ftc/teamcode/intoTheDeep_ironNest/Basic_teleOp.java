@@ -13,7 +13,7 @@ public class Basic_teleOp extends LinearOpMode{
     private DcMotor BL;
     private DcMotor BR;
     private Controller Gamepad1;
-    private Servo lift1;
+
 
 
 

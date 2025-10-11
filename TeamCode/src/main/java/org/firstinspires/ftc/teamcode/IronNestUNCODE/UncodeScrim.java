@@ -29,8 +29,6 @@ public class UncodeScrim extends LinearOpMode{
                 FR.setPower(Gamepad1.left_stick_y- Gamepad1.left_stick_x- Gamepad1.right_stick_x);
                 BL.setPower(Gamepad1.left_stick_y- Gamepad1.left_stick_x+ Gamepad1.right_stick_x);
                 BR.setPower(Gamepad1.left_stick_y+ Gamepad1.left_stick_x- Gamepad1.right_stick_x);
-
-
             }
 
 

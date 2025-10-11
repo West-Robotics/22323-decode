@@ -3,10 +3,30 @@ import java.text.SimpleDateFormat
 //
 // build.gradle in FtcRobotController
 //
+
 apply plugin: 'com.android.library'
+buildscript {
+    ext.kotlin_version = '1.8.22'
+    // ...
+}
 
+allprojects {
+    configurations.all {
+        resolutionStrategy {
+            // Force all Kotlin libraries to the same version
+            force "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
+            force "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22"
+            force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22"
+            force "org.jetbrains.kotlin:kotlin-stdlib-common:1.8.22"
+        }
+
+        // Exclude old Kotlin versions from coroutines
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-common'
+    }
+}
 android {
-
     defaultConfig {
         minSdkVersion 24
         //noinspection ExpiredTargetSdkVersion
@@ -25,6 +45,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     namespace = 'com.qualcomm.ftcrobotcontroller'
-}
 
-apply from: '../build.dependencies.gradle'
+    apply from: '../build.dependencies.gradle'
+}

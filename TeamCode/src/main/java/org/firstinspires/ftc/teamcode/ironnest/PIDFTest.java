@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.IronNest;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.Controller;
+import org.firstinspires.ftc.teamcode.util.control.Controller;
 //import org.firstinspires.ftc.teamcode.PIDController;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import org.firstinspires.ftc.teamcode.Controller;
+import org.firstinspires.ftc.teamcode.util.control.Controller;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;

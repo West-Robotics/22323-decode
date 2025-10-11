@@ -9,7 +9,7 @@ public class Controller {
     private int dpad_up, dpad_down, dpad_left, dpad_right;
     private int x, y, a, b;
     private int left_stick_button, right_stick_button;
-    private int left_bumper, right_bumper;
+    public int left_bumper, right_bumper;
     private int start, back;
 
     public double left_stick_x, right_stick_x, left_stick_y, right_stick_y;

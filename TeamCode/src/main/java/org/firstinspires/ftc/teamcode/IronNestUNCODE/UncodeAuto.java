@@ -26,9 +26,8 @@ public class UncodeAuto extends LinearOpMode {
         telemetry.update();
         timer = new ElapsedTime();
         waitForStart();
-
+        timer.reset();
         while (opModeIsActive()){
-            timer.reset();
             if (timer.seconds()<1.5){
                 FL.setPower(0.75); FR.setPower(-0.75); BL.setPower(0.75); BR.setPower(-0.75);
             }else {
