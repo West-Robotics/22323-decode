@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.util.control.Controller;
 @Config
-@TeleOp(name="V1-tele")
+@TeleOp(name="V2-tele")
 public class UncodeTeleV1 extends LinearOpMode{
     @Override
         public void runOpMode() {
@@ -21,7 +21,7 @@ public class UncodeTeleV1 extends LinearOpMode{
             DcMotor BR = hardwareMap.get(DcMotor.class, "BackR");
             DcMotor BL = hardwareMap.get(DcMotor.class, "BackL");
             Servo liftL = hardwareMap.get(Servo.class, "LiftL");
-            Servo lift2 = hardwareMap.get(Servo.class, "LiftR");
+            Servo liftR = hardwareMap.get(Servo.class, "LiftR");
             DcMotor In = hardwareMap.get(DcMotor.class, "intake");
             DcMotor OutL = hardwareMap.get(DcMotor.class, "outtakeL");
             DcMotor OutR = hardwareMap.get(DcMotor.class, "outtakeR");
@@ -32,17 +32,18 @@ public class UncodeTeleV1 extends LinearOpMode{
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
-                FL.setPower(Gamepad1.left_stick_y+ Gamepad1.left_stick_x);
-                FR.setPower(-Gamepad1.left_stick_y+ Gamepad1.left_stick_x);
-                BL.setPower(-Gamepad1.left_stick_y+ Gamepad1.left_stick_x);
-                BR.setPower(-Gamepad1.left_stick_y+ Gamepad1.left_stick_x);
+
+                FL.setPower(Gamepad1.left_stick_y+ Gamepad1.left_stick_x+Gamepad1.right_stick_x);
+                FR.setPower(-Gamepad1.left_stick_y+ Gamepad1.left_stick_x- Gamepad1.right_stick_x);
+                BL.setPower(-Gamepad1.left_stick_y+ Gamepad1.left_stick_x+Gamepad1.right_stick_x);
+                BR.setPower(-Gamepad1.left_stick_y+ Gamepad1.left_stick_x- Gamepad1.right_stick_x);
                 if(Gamepad1.Y()){
                     liftL.setPosition(0.99);
-                    lift2.setPosition(0.01);
+                    liftR.setPosition(0.01);
                 }
                 if(Gamepad1.A()){
                     liftL.setPosition(0.87);
-                    lift2.setPosition(0.13);
+                    liftR.setPosition(0.13);
                 }
                 if(Gamepad1.leftBumper()){
                     In.setPower(-1);

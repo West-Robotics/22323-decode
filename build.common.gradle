@@ -107,7 +107,9 @@ android {
     }
 
     packagingOptions {
-        pickFirst '**/*.so'
+        jniLibs {
+            pickFirsts.add('**/*.so')
+        }
     }
     ndkVersion '21.3.6528147'
 }
