@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 @Config
 @Autonomous  (name = "Scrim auto")
@@ -21,19 +22,43 @@ public class UncodeAuto extends LinearOpMode {
         DcMotor FR = hardwareMap.get(DcMotor.class, "FrontR");
         DcMotor BR = hardwareMap.get(DcMotor.class, "BackR");
         DcMotor BL = hardwareMap.get(DcMotor.class, "BackL");
-
+        DcMotor OutL = hardwareMap.get(DcMotor.class, "outtakeL");
+        DcMotor OutR = hardwareMap.get(DcMotor.class, "outtakeR");
+        Servo liftL = hardwareMap.get(Servo.class, "LiftL");
+        Servo liftR = hardwareMap.get(Servo.class, "LiftR");
+        int iteration  = 0 ;
+        boolean Reached_target_position = false;
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         timer = new ElapsedTime();
         waitForStart();
         timer.reset();
         while (opModeIsActive()){
-            if (timer.seconds()<1.5){
-                FL.setPower(0.75); FR.setPower(-0.75); BL.setPower(0.75); BR.setPower(-0.75);
+            if (timer.seconds()<0.7 && !Reached_target_position){
+                FL.setPower(-0.75); FR.setPower(0.75); BL.setPower(0.75); BR.setPower(0.75);
+                sleep(700);
+                Reached_target_position = true;
             }else {
                 FL.setPower(0); FR.setPower(0); BL.setPower(0); BR.setPower(0);
+                sleep(1000);
+                    if (timer.seconds()<3 && iteration<3){
+                        OutL.setPower(1); OutR.setPower(-1);
+                        sleep(10);
+                        liftL.setPosition(0.99);
+                        liftR.setPosition(0.01);
+                        telemetry.addData("Status", "Outtake");
+                    }else {
+                        OutL.setPower(0); OutR.setPower(0);
+                        liftL.setPosition(0.87);
+                        liftR.setPosition(0.13);
+                        sleep(3000);
+                        timer.reset();
+                        iteration += 1;
+                        telemetry.addData("Status", "Outtake Complete");
             }
-            telemetry.update();
+                telemetry.update();
         }
     }
 }
+}
+
