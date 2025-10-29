@@ -3,9 +3,7 @@ package org.firstinspires.ftc.teamcode.intoTheDeep_ironNest;
 
 
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -76,7 +74,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
         @Override
         public void runOpMode() throws InterruptedException {
-            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+            //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
             claw = hardwareMap.get(Servo.class, "claw");
             sliders = hardwareMap.get(DcMotor.class, "primary_arm");
             secondaryArm = hardwareMap.get(Servo.class, "secondaryArm");

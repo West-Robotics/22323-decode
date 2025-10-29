@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.util.control.Controller;
 
@@ -23,8 +24,10 @@ public class UncodeTeleV1 extends LinearOpMode{
             DcMotor OutL = hardwareMap.get(DcMotor.class, "outtakeL");
             DcMotor OutR = hardwareMap.get(DcMotor.class, "outtakeR");
             Controller Gamepad1 = new Controller(gamepad1);
-
-
+            FR.setDirection(DcMotorSimple.Direction.REVERSE);
+            BR.setDirection(DcMotorSimple.Direction.REVERSE);
+            FL.setDirection(DcMotorSimple.Direction.FORWARD);
+            BL.setDirection(DcMotorSimple.Direction.FORWARD);
 
             waitForStart();
 
@@ -46,21 +49,24 @@ public class UncodeTeleV1 extends LinearOpMode{
                 BR.setPower(backRightPower);
 
                 if(Gamepad1.Y()){
-                    liftL.setPosition(0.99);
-                    liftR.setPosition(0.01);
+                    liftL.setPosition(0.01);
+                    liftR.setPosition(0.99);
                 }
                 if(Gamepad1.A()){
-                    liftL.setPosition(0.87);
-                    liftR.setPosition(0.13);
+                    liftL.setPosition(0.13);
+                    liftR.setPosition(0.87);
                 }
                 if(Gamepad1.leftBumper()){
                     In.setPower(-1);
+                }else if(Gamepad1.left_trigger>0.1){
+                    In.setPower(Gamepad1.left_trigger);
                 }else{
                     In.setPower(0);
                 }
+
                 if(Gamepad1.right_trigger>0.5){
-                    OutL.setPower(1);
-                    OutR.setPower(-1);
+                    OutL.setPower(-1);
+                    OutR.setPower(1);
                 } else{
                     OutL.setPower(0);
                     OutR.setPower(0);
