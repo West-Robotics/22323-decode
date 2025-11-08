@@ -25,6 +25,7 @@ public class UncodeAuto extends LinearOpMode {
         DcMotor BL = hardwareMap.get(DcMotor.class, "BackL");
         DcMotor OutL = hardwareMap.get(DcMotor.class, "outtakeL");
         DcMotor OutR = hardwareMap.get(DcMotor.class, "outtakeR");
+        DcMotor In = hardwareMap.get(DcMotor.class, "intake");
         Servo liftL = hardwareMap.get(Servo.class, "LiftL");
         Servo liftR = hardwareMap.get(Servo.class, "LiftR");
         FR.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -39,27 +40,34 @@ public class UncodeAuto extends LinearOpMode {
         waitForStart();
         timer.reset();
         while (opModeIsActive()){
-            if (timer.seconds()<0.7 && !Reached_target_position){
+            if (timer.seconds()<0.5 && !Reached_target_position){
                 FL.setPower(0.75); FR.setPower(0.75); BL.setPower(0.75); BR.setPower(0.75);
                 sleep(600);
                 Reached_target_position = true;
+                FL.setPower(-0.75); FR.setPower(-0.75); BL.setPower(-0.75); BR.setPower(-0.75);
+                sleep(10);
+                FL.setPower(0); FR.setPower(0); BL.setPower(0); BR.setPower(0);
             }else {
                 FL.setPower(0); FR.setPower(0); BL.setPower(0); BR.setPower(0);
                 sleep(1000);
                     if (timer.seconds()<3 && iteration<3){
                         OutL.setPower(-1); OutR.setPower(1);
+                        In.setPower(-1);
                         sleep(15);
                         liftL.setPosition(0.01);
                         liftR.setPosition(0.99);
                         telemetry.addData("Status", "Outtake");
                     }else {
-                        liftL.setPosition(0.14);
-                        liftR.setPosition(0.86);
-                        sleep(3000);
+                        liftL.setPosition(0.15);
+                        liftR.setPosition(0.85);
+                        sleep(1000);
                         timer.reset();
                         iteration += 1;
                         telemetry.addData("Status", "Outtake Comple");
-                        if(iteration == 3){break;}
+                        if(iteration == 3){
+                            FL.setPower(-0.75); FR.setPower(0.75); BL.setPower(0.75); BR.setPower(-0.75);
+                            sleep(500);
+                            break;}
             }
                 telemetry.update();
         }

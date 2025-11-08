@@ -47,19 +47,25 @@ public class UncodeTeleV1 extends LinearOpMode{
                 BL.setPower(backLeftPower);
                 FR.setPower(frontRightPower);
                 BR.setPower(backRightPower);
-
+                if(Gamepad1.rightBumper()){
+                    FL.setPower(frontLeftPower/6);
+                    BL.setPower(backLeftPower/6);
+                    FR.setPower(frontRightPower/6);
+                    BR.setPower(backRightPower/6);
+                }
+                // need to test servo position for lift
                 if(Gamepad1.Y()){
-                    liftL.setPosition(0.01);
-                    liftR.setPosition(0.99);
+                    liftL.setPosition(0.0001);
+                    liftR.setPosition(0.999);
                 }
                 if(Gamepad1.A()){
                     liftL.setPosition(0.13);
                     liftR.setPosition(0.87);
                 }
-                if(Gamepad1.leftBumper()){
+                if(Gamepad1.left_trigger>.2){
                     In.setPower(-1);
-                }else if(Gamepad1.left_trigger>0.1){
-                    In.setPower(Gamepad1.left_trigger);
+                }else if(Gamepad1.leftBumper()){
+                    In.setPower(0.25);
                 }else{
                     In.setPower(0);
                 }
