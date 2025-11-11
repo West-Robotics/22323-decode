@@ -42,7 +42,7 @@ public class UncodeAuto extends LinearOpMode {
         while (opModeIsActive()){
             if (timer.seconds()<0.5 && !Reached_target_position){
                 FL.setPower(0.75); FR.setPower(0.75); BL.setPower(0.75); BR.setPower(0.75);
-                sleep(600);
+                sleep(700);
                 Reached_target_position = true;
                 FL.setPower(-0.75); FR.setPower(-0.75); BL.setPower(-0.75); BR.setPower(-0.75);
                 sleep(10);

@@ -43,24 +43,25 @@ public class UncodeTeleV1 extends LinearOpMode{
                 double frontRightPower = (y - x - rx) / denominator;
                 double backRightPower = (y + x - rx) / denominator;
 
-                FL.setPower(frontLeftPower);
-                BL.setPower(backLeftPower);
-                FR.setPower(frontRightPower);
-                BR.setPower(backRightPower);
+
                 if(Gamepad1.rightBumper()){
                     FL.setPower(frontLeftPower/6);
                     BL.setPower(backLeftPower/6);
                     FR.setPower(frontRightPower/6);
                     BR.setPower(backRightPower/6);
+                }else{FL.setPower(frontLeftPower);
+                    BL.setPower(backLeftPower);
+                    FR.setPower(frontRightPower);
+                    BR.setPower(backRightPower);
                 }
-                if(Gamepad1.A()){
+                if(Gamepad1.A()||gamepad2.a){
                     liftL.setPosition(0.01);
                     liftR.setPosition(0.99);
                 }else{
                         liftL.setPosition(0.15);
                         liftR.setPosition(0.85);
                 }
-                if(Gamepad1.left_trigger>.2){
+                if(Gamepad1.left_trigger>.2||gamepad1.left_trigger>.2){
                     In.setPower(-1);
                 }else if(Gamepad1.leftBumper()){
                     In.setPower(0.25);
@@ -70,7 +71,7 @@ public class UncodeTeleV1 extends LinearOpMode{
 
 
 
-                if(Gamepad1.right_trigger>0.5){
+                if(Gamepad1.right_trigger>0.5||gamepad1.right_trigger>0.5){
                     OutL.setPower(-1);
                     OutR.setPower(1);
                 } else{
