@@ -63,7 +63,7 @@ public class UncodeTeleV1 extends LinearOpMode{
                 }
                 if(Gamepad1.left_trigger>.2||gamepad1.left_trigger>.2){
                     In.setPower(-1);
-                }else if(Gamepad1.leftBumper()){
+                }else if(Gamepad1.leftBumper()||gamepad2.left_bumper){
                     In.setPower(0.25);
                 }else{
                     In.setPower(0);
@@ -71,7 +71,7 @@ public class UncodeTeleV1 extends LinearOpMode{
 
 
 
-                if(Gamepad1.right_trigger>0.5||gamepad1.right_trigger>0.5){
+                if(Gamepad1.right_trigger>0.5||gamepad2.right_trigger>0.5){
                     OutL.setPower(-1);
                     OutR.setPower(1);
                 } else{
