@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous  (name = "Scrim auto")
-public class UncodeAuto extends LinearOpMode {
+@Autonomous  (name = "The auto red")
+public class UncodeAutoBlue extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -50,28 +50,28 @@ public class UncodeAuto extends LinearOpMode {
             }else {
                 FL.setPower(0); FR.setPower(0); BL.setPower(0); BR.setPower(0);
                 sleep(1000);
-                    if (timer.seconds()<3 && iteration<3){
-                        OutL.setPower(-1); OutR.setPower(1);
-                        In.setPower(-1);
-                        sleep(15);
-                        liftL.setPosition(0.01);
-                        liftR.setPosition(0.99);
-                        telemetry.addData("Status", "Outtake");
-                    }else {
-                        liftL.setPosition(0.15);
-                        liftR.setPosition(0.85);
-                        sleep(1000);
-                        timer.reset();
-                        iteration += 1;
-                        telemetry.addData("Status", "Outtake Comple");
-                        if(iteration == 3){
-                            FL.setPower(-0.75); FR.setPower(0.75); BL.setPower(0.75); BR.setPower(-0.75);
-                            sleep(500);
-                            break;}
-            }
+                if (timer.seconds()<3 && iteration<3){
+                    OutL.setPower(-1); OutR.setPower(1);
+                    In.setPower(-1);
+                    sleep(15);
+                    liftL.setPosition(0.01);
+                    liftR.setPosition(0.99);
+                    telemetry.addData("Status", "Outtake");
+                }else {
+                    liftL.setPosition(0.15);
+                    liftR.setPosition(0.85);
+                    sleep(1000);
+                    timer.reset();
+                    iteration += 1;
+                    telemetry.addData("Status", "Outtake Comple");
+                    if(iteration == 3){
+                        FL.setPower(-0.75); FR.setPower(0.75); BL.setPower(0.75); BR.setPower(-0.75);
+                        sleep(750);
+                        break;}
+                }
                 telemetry.update();
+            }
         }
-    }
 }
 }
 
