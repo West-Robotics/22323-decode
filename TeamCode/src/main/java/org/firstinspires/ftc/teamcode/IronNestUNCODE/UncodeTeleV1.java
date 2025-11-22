@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.util.control.Controller;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @TeleOp(name="V2-tele")
 public class UncodeTeleV1 extends LinearOpMode{
@@ -18,16 +20,19 @@ public class UncodeTeleV1 extends LinearOpMode{
             DcMotor FR = hardwareMap.get(DcMotor.class, "FrontR");
             DcMotor BR = hardwareMap.get(DcMotor.class, "BackR");
             DcMotor BL = hardwareMap.get(DcMotor.class, "BackL");
-            Servo liftL = hardwareMap.get(Servo.class, "LiftL");
-            Servo liftR = hardwareMap.get(Servo.class, "LiftR");
             DcMotor In = hardwareMap.get(DcMotor.class, "intake");
-            DcMotor OutL = hardwareMap.get(DcMotor.class, "outtakeL");
-            DcMotor OutR = hardwareMap.get(DcMotor.class, "outtakeR");
-            Controller Gamepad1 = new Controller(gamepad1);
-            FR.setDirection(DcMotorSimple.Direction.REVERSE);
+            DcMotorEx OutL = hardwareMap.get(DcMotorEx.class, "outtakeL");
+            DcMotorEx OutR = hardwareMap.get(DcMotorEx.class, "outtakeR");
+
+            FR.setDirection(DcMotorSimple.Direction.FORWARD);
             BR.setDirection(DcMotorSimple.Direction.REVERSE);
             FL.setDirection(DcMotorSimple.Direction.FORWARD);
             BL.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        Controller Gamepad1 = new Controller(gamepad1);
+        
+        Servo liftL = hardwareMap.get(Servo.class, "LiftL");
+        Servo liftR = hardwareMap.get(Servo.class, "LiftR");
 
             waitForStart();
 
