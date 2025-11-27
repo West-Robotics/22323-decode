@@ -24,7 +24,7 @@ public class UncodeTeleV1 extends LinearOpMode{
             DcMotor OutL = hardwareMap.get(DcMotor.class, "outtakeL");
             DcMotor OutR = hardwareMap.get(DcMotor.class, "outtakeR");
             Controller Gamepad1 = new Controller(gamepad1);
-            FR.setDirection(DcMotorSimple.Direction.REVERSE);
+            FR.setDirection(DcMotorSimple.Direction.FORWARD);
             BR.setDirection(DcMotorSimple.Direction.REVERSE);
             FL.setDirection(DcMotorSimple.Direction.FORWARD);
             BL.setDirection(DcMotorSimple.Direction.FORWARD);

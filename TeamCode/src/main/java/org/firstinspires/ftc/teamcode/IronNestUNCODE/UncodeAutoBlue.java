@@ -6,29 +6,30 @@ package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous  (name = "The auto red")
-public class UncodeAutoBlue extends LinearOpMode {
-
+@Autonomous  (name = "The auto blue")
+public class UncodeAutoBlue extends LinearOpMode{
     @Override
     public void runOpMode() {
         ElapsedTime timer ;
         //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        DcMotor FL = hardwareMap.get(DcMotor.class, "FrontL");
-        DcMotor FR = hardwareMap.get(DcMotor.class, "FrontR");
-        DcMotor BR = hardwareMap.get(DcMotor.class, "BackR");
-        DcMotor BL = hardwareMap.get(DcMotor.class, "BackL");
-        DcMotor OutL = hardwareMap.get(DcMotor.class, "outtakeL");
-        DcMotor OutR = hardwareMap.get(DcMotor.class, "outtakeR");
-        DcMotor In = hardwareMap.get(DcMotor.class, "intake");
+        DcMotorEx FL = hardwareMap.get(DcMotorEx.class, "FrontL");
+        DcMotorEx FR = hardwareMap.get(DcMotorEx.class, "FrontR");
+        DcMotorEx BR = hardwareMap.get(DcMotorEx.class, "BackR");
+        DcMotorEx BL = hardwareMap.get(DcMotorEx.class, "BackL");
+        DcMotorEx OutL = hardwareMap.get(DcMotorEx.class, "outtakeL");
+        DcMotorEx OutR = hardwareMap.get(DcMotorEx.class, "outtakeR");
+        DcMotorEx In = hardwareMap.get(DcMotorEx.class, "intake");
         Servo liftL = hardwareMap.get(Servo.class, "LiftL");
         Servo liftR = hardwareMap.get(Servo.class, "LiftR");
-        FR.setDirection(DcMotorSimple.Direction.REVERSE);
+        FR.setDirection(DcMotorSimple.Direction.FORWARD);
+
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
         FL.setDirection(DcMotorSimple.Direction.FORWARD);
         BL.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -41,11 +42,9 @@ public class UncodeAutoBlue extends LinearOpMode {
         timer.reset();
         while (opModeIsActive()){
             if (timer.seconds()<0.5 && !Reached_target_position){
-                FL.setPower(0.75); FR.setPower(0.75); BL.setPower(0.75); BR.setPower(0.75);
-                sleep(700);
+                FL.setPower(0.375); FR.setPower(0.375); BL.setPower(0.375); BR.setPower(0.375);
+                sleep(1800);
                 Reached_target_position = true;
-                FL.setPower(-0.75); FR.setPower(-0.75); BL.setPower(-0.75); BR.setPower(-0.75);
-                sleep(10);
                 FL.setPower(0); FR.setPower(0); BL.setPower(0); BR.setPower(0);
             }else {
                 FL.setPower(0); FR.setPower(0); BL.setPower(0); BR.setPower(0);
@@ -58,20 +57,20 @@ public class UncodeAutoBlue extends LinearOpMode {
                     liftR.setPosition(0.99);
                     telemetry.addData("Status", "Outtake");
                 }else {
-                    liftL.setPosition(0.15);
-                    liftR.setPosition(0.85);
+                    liftL.setPosition(0.22);
+                    liftR.setPosition(0.78);
                     sleep(1000);
                     timer.reset();
                     iteration += 1;
-                    telemetry.addData("Status", "Outtake Comple");
+                    telemetry.addData("Status", "Outtake Complete");
                     if(iteration == 3){
-                        FL.setPower(-0.75); FR.setPower(0.75); BL.setPower(0.75); BR.setPower(-0.75);
+                        FL.setPower(0.75); FR.setPower(-0.75); BL.setPower(-0.75); BR.setPower(0.75);
                         sleep(750);
                         break;}
                 }
                 telemetry.update();
             }
         }
-}
+     }
 }
 
