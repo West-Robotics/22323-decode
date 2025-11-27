@@ -58,8 +58,8 @@ public class UncodeTeleV1 extends LinearOpMode{
                     liftL.setPosition(0.01);
                     liftR.setPosition(0.99);
                 }else{
-                        liftL.setPosition(0.15);
-                        liftR.setPosition(0.85);
+                        liftL.setPosition(0.22);
+                        liftR.setPosition(0.78);
                 }
                 if(Gamepad1.left_trigger>.2||gamepad2.left_trigger>.2){
                     In.setPower(-1);
