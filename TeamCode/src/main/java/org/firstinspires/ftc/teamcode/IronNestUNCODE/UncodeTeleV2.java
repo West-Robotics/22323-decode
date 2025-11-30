@@ -86,6 +86,11 @@ public class UncodeTeleV2 extends LinearOpMode{
             BR.setDirection(DcMotorSimple.Direction.REVERSE);
             FL.setDirection(DcMotorSimple.Direction.FORWARD);
             BL.setDirection(DcMotorSimple.Direction.FORWARD);
+            OutR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            OutL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            OutR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            OutL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            OutL.setVelocity(0); OutR.setVelocity(0);
 
             initAprilTag();
 
@@ -139,8 +144,9 @@ public class UncodeTeleV2 extends LinearOpMode{
 
 
                 if(Gamepad1.right_trigger>0.5||gamepad2.right_trigger>0.5){
+                    OutL.setVelocity(-1  ); OutR.setVelocity(-1);
                     OutL.setPower(-1);
-                    OutR.setPower(1);
+                    OutR.setPower(-1);
                 } else{
                     OutL.setPower(0);
                     OutR.setPower(0);
