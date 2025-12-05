@@ -21,6 +21,7 @@ import java.util.Locale;
 
 @TeleOp(name="V2-tele")
 public class UncodeTeleV2 extends LinearOpMode{
+    PIDController VelocityControl= new PIDController(Speed_Gain,0, Braking_gain);
     private AprilTagProcessor aprilTag; // AprilTag processor object
     private VisionPortal visionPortal; // Vision portal object
 
@@ -30,7 +31,6 @@ public class UncodeTeleV2 extends LinearOpMode{
     private static final int Speed_Gain = 2;
     private static final double Braking_gain = 1.2;
 
-    private  PIDController VelocityControl;
     @Override
         public void runOpMode() {
 
@@ -68,7 +68,6 @@ public class UncodeTeleV2 extends LinearOpMode{
 
 
             Controller Gamepad1 = new Controller(gamepad1);
-            VelocityControl= new PIDController(Speed_Gain,0, Braking_gain);
             waitForStart();
 
             // run until the end of the match (driver presses STOP)
