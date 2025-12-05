@@ -106,7 +106,7 @@ public class UncodeAuto extends LinearOpMode {
                 FL.setPower(0.75); FR.setPower(0.75); BL.setPower(0.75); BR.setPower(0.75);
                 sleep(700);
                 Reached_target_position = true;
-                FL.setPower(-0.75); FR.setPower(-0.75); BL.setPower(-0.75); BR.setPower(-0.75);
+                FL.setPower(0.75); FR.setPower(0.75); BL.setPower(0.75); BR.setPower(0.75);
                 sleep(10);
                 FL.setPower(0); FR.setPower(0); BL.setPower(0); BR.setPower(0);
             }else {
