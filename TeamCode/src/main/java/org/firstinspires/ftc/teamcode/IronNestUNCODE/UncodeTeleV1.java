@@ -29,6 +29,11 @@ public class UncodeTeleV1 extends LinearOpMode{
             FL.setDirection(DcMotorSimple.Direction.FORWARD);
             BL.setDirection(DcMotorSimple.Direction.FORWARD);
 
+            FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
             waitForStart();
 
             // run until the end of the match (driver presses STOP)

@@ -29,10 +29,15 @@ public class UncodeAutoBlue extends LinearOpMode{
         Servo liftL = hardwareMap.get(Servo.class, "LiftL");
         Servo liftR = hardwareMap.get(Servo.class, "LiftR");
         FR.setDirection(DcMotorSimple.Direction.FORWARD);
-
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
         FL.setDirection(DcMotorSimple.Direction.FORWARD);
         BL.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         int iteration  = 0 ;
         boolean Reached_target_position = false;
         telemetry.addData("Status", "Initialized");
@@ -43,14 +48,14 @@ public class UncodeAutoBlue extends LinearOpMode{
         while (opModeIsActive()){
             if (timer.seconds()<0.5 && !Reached_target_position){
                 FL.setPower(0.375); FR.setPower(0.375); BL.setPower(0.375); BR.setPower(0.375);
-                sleep(1800);
+                sleep(1850);
                 Reached_target_position = true;
                 FL.setPower(0); FR.setPower(0); BL.setPower(0); BR.setPower(0);
             }else {
                 FL.setPower(0); FR.setPower(0); BL.setPower(0); BR.setPower(0);
                 sleep(1000);
                 if (timer.seconds()<3 && iteration<3){
-                    OutL.setPower(-1); OutR.setPower(1);
+                    OutL.setPower(-0.95); OutR.setPower(0.95);
                     In.setPower(-1);
                     sleep(15);
                     liftL.setPosition(0.01);
