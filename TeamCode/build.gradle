@@ -40,3 +40,7 @@ android {
 dependencies {
     implementation project(':FtcRobotController')
 }
+// At the bottom of TeamCode/build.gradle
+tasks.named("deploySloth") {
+    notCompatibleWithConfigurationCache("Sloth deploy uses project at execution time")
+}
