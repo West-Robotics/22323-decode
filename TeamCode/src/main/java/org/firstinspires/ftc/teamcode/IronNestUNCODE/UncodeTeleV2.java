@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
-import com.qualcomm.hardware.lynx.commands.core.LynxGetMotorTargetVelocityCommand;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-import java.lang.annotation.Target;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,14 +18,16 @@ import java.util.Locale;
 
 @TeleOp(name="V2-tele")
 public class UncodeTeleV2 extends LinearOpMode{
-    PIDController VelocityControl= new PIDController(Speed_Gain,0, Braking_gain);
+    PIDController VelocityControlRight = new PIDController(Speed_Gain,0, Braking_gain);
+    PIDController VelocityControlLeft = new PIDController(Speed_Gain,0, Braking_gain);
     private AprilTagProcessor aprilTag; // AprilTag processor object
     private VisionPortal visionPortal; // Vision portal object
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
-    private static final int TargetVelocity = 28300;
-    private static final int Speed_Gain = 2;
+    private static final int TargetVelocityRight = 26300;
+    private static final int TargetVelocityLeft = -26300;
+    private static final double Speed_Gain = 1.2  ;
     private static final double Braking_gain = 1.2;
 
     @Override
@@ -62,9 +61,12 @@ public class UncodeTeleV2 extends LinearOpMode{
             OutL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
             initAprilTag();
-            VelocityControl.enable();
-            VelocityControl.setSetpoint(TargetVelocity);
-            VelocityControl.setOutputRange(0,1);
+            VelocityControlRight.enable();
+            VelocityControlRight.setSetpoint(TargetVelocityRight);
+            VelocityControlRight.setOutputRange(0,1);
+            VelocityControlLeft.enable();
+            VelocityControlLeft.setSetpoint(TargetVelocityLeft);
+            VelocityControlLeft.setOutputRange(0,1);
 
 
             Controller Gamepad1 = new Controller(gamepad1);
@@ -119,8 +121,21 @@ public class UncodeTeleV2 extends LinearOpMode{
 
                 // Outtake controls
                 if(Gamepad1.right_trigger>0.5||gamepad2.right_trigger>0.5){
-                    OutL.setPower(1);
-                    OutR.setPower(-1);
+                    double left_power = VelocityControlLeft.performPID(OutL.getVelocity());
+                    double right_power = VelocityControlRight.performPID(OutR.getVelocity());
+                    telemetry.addData("left power from PID ", left_power);
+                    telemetry.addData("left wheel velocity", OutL.getVelocity());
+                    telemetry.addData("right wheel power inputs", right_power);
+                    telemetry.addData("right wheel velocity ", OutR.getVelocity());
+                    if (left_power < 0) {
+                        OutL.setPower(left_power);
+                    }
+                    if (right_power > 0) {
+                        OutR.setPower(right_power);
+                    }else{
+                        telemetry.addLine("PID IS DOING WEIRD THINGS");
+                    }
+                    telemetry.update();
                 } else{
                     OutL.setPower(0);
                     OutR.setPower(0);
