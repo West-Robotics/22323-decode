@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -16,18 +17,10 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.Locale;
 
-@Autonomous  (name = "Scrim auto")
-public class UncodeAuto extends LinearOpMode {
+@Autonomous(name = "The auto red")
+public class UncodeAutoRed extends LinearOpMode {
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
-
-    /**
-     * The variable to store our instance of the AprilTag processor.
-     */
     private AprilTagProcessor aprilTag;
-
-    /**
-     * The variable to store our instance of the vision portal.
-     */
     private VisionPortal visionPortal;
     private void initAprilTag() {
 
@@ -44,9 +37,6 @@ public class UncodeAuto extends LinearOpMode {
         }
 
     }
-
-
-
     private void telemetryAprilTag() {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -74,24 +64,31 @@ public class UncodeAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
         ElapsedTime timer ;
+        //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        DcMotor FL = hardwareMap.get(DcMotor.class, "FrontL");
-        DcMotor FR = hardwareMap.get(DcMotor.class, "FrontR");
-        DcMotor BR = hardwareMap.get(DcMotor.class, "BackR");
-        DcMotor BL = hardwareMap.get(DcMotor.class, "BackL");
-        DcMotor OutL = hardwareMap.get(DcMotor.class, "outtakeL");
-        DcMotor OutR = hardwareMap.get(DcMotor.class, "outtakeR");
-        DcMotor In = hardwareMap.get(DcMotor.class, "intake");
+        DcMotorEx FL = hardwareMap.get(DcMotorEx.class, "FrontL");
+        DcMotorEx FR = hardwareMap.get(DcMotorEx.class, "FrontR");
+        DcMotorEx BR = hardwareMap.get(DcMotorEx.class, "BackR");
+        DcMotorEx BL = hardwareMap.get(DcMotorEx.class, "BackL");
+        DcMotorEx OutL = hardwareMap.get(DcMotorEx.class, "outtakeL");
+        DcMotorEx OutR = hardwareMap.get(DcMotorEx.class, "outtakeR");
+        DcMotorEx In = hardwareMap.get(DcMotorEx.class, "intake");
         Servo liftL = hardwareMap.get(Servo.class, "LiftL");
         Servo liftR = hardwareMap.get(Servo.class, "LiftR");
-        FR.setDirection(DcMotorSimple.Direction.REVERSE);
+        FR.setDirection(DcMotorSimple.Direction.FORWARD);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
         FL.setDirection(DcMotorSimple.Direction.FORWARD);
         BL.setDirection(DcMotorSimple.Direction.FORWARD);
-        
+
         initAprilTag();
-        
+
+
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         int iteration  = 0 ;
         boolean Reached_target_position = false;
         telemetry.addData("Status", "Initialized");
@@ -103,36 +100,35 @@ public class UncodeAuto extends LinearOpMode {
             telemetryAprilTag();
 
             if (timer.seconds()<0.5 && !Reached_target_position){
-                FL.setPower(0.75); FR.setPower(0.75); BL.setPower(0.75); BR.setPower(0.75);
-                sleep(700);
+                FL.setPower(0.375); FR.setPower(0.375); BL.setPower(0.375); BR.setPower(0.375);
+                sleep(1850);
                 Reached_target_position = true;
-                FL.setPower(0.75); FR.setPower(0.75); BL.setPower(0.75); BR.setPower(0.75);
-                sleep(10);
                 FL.setPower(0); FR.setPower(0); BL.setPower(0); BR.setPower(0);
             }else {
                 FL.setPower(0); FR.setPower(0); BL.setPower(0); BR.setPower(0);
                 sleep(1000);
-                    if (timer.seconds()<3 && iteration<3){
-                        OutL.setPower(-1); OutR.setPower(1);
-                        In.setPower(-1);
-                        sleep(15);
-                        liftL.setPosition(0.01);
-                        liftR.setPosition(0.99);
-                        telemetry.addData("Status", "Outtake");
-                    }else {
-                        liftL.setPosition(0.15);
-                        liftR.setPosition(0.85);
-                        sleep(1000);
-                        timer.reset();
-                        iteration += 1;
-                        telemetry.addData("Status", "Outtake Comple");
-                        if(iteration == 3){
-                            FL.setPower(-0.75); FR.setPower(0.75); BL.setPower(0.75); BR.setPower(-0.75);
-                            sleep(500);
-                            break;}
-            }
+                if (timer.seconds()<3 && iteration<3){
+                    OutL.setPower(-0.95); OutR.setPower(0.95);
+                    In.setPower(-1);
+                    sleep(15);
+                    liftL.setPosition(0.01);
+                    liftR.setPosition(0.99);
+                    telemetry.addData("Status", "Outtake");
+                }else {
+                    liftL.setPosition(0.22);
+                    liftR.setPosition(0.78);
+                    sleep(1000);
+                    timer.reset();
+                    iteration += 1;
+                    telemetry.addData("Status", "Outtake Complete");
+                    if(iteration == 3){
+                        FL.setPower(-0.75); FR.setPower(0.75); BL.setPower(0.75); BR.setPower(-0.75);
+                        sleep(750);
+                        break;}
+                }
                 telemetry.update();
+            }
         }
     }
 }
-}
+
