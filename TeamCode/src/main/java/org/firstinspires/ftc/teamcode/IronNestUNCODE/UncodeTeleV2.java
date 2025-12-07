@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,7 +16,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.Locale;
-
+@Configurable
 @TeleOp(name="V2-tele")
 public class UncodeTeleV2 extends LinearOpMode{
     PIDController VelocityControlRight = new PIDController(Speed_Gain,0, Braking_gain);
@@ -25,9 +26,9 @@ public class UncodeTeleV2 extends LinearOpMode{
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
-    private static final int TargetVelocityRight = 26300;
-    private static final int TargetVelocityLeft = -26300;
-    private static final double Speed_Gain = 1.2  ;
+    public static final int TargetVelocityRight = 26300;
+    public static final int TargetVelocityLeft = -26300;
+    public static final double Speed_Gain = 1.2  ;
     private static final double Braking_gain = 1.2;
 
     @Override

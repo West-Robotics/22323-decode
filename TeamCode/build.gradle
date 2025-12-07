@@ -21,6 +21,7 @@ buildscript {
         mavenCentral()
         maven {
             url "https://repo.dairy.foundation/releases"
+
         }
     }
     dependencies {
@@ -43,4 +44,17 @@ dependencies {
 // At the bottom of TeamCode/build.gradle
 tasks.named("deploySloth") {
     notCompatibleWithConfigurationCache("Sloth deploy uses project at execution time")
+}
+
+android {
+    namespace = 'org.firstinspires.ftc.teamcode'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 24
+    }
+
+    packagingOptions {
+        jniLibs.useLegacyPackaging true
+    }
 }
