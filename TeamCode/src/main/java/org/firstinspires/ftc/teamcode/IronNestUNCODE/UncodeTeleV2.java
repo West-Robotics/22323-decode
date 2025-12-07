@@ -129,7 +129,7 @@ public class UncodeTeleV2 extends LinearOpMode{
                     telemetry.addData("right wheel power inputs", right_power);
                     telemetry.addData("right wheel velocity ", OutR.getVelocity());
                     if (left_power < 0) {
-                        OutL.setPower(left_power);
+                        OutL.setPower(VelocityControlLeft.performPID(OutL.getVelocity()));
                     }
                     if (right_power > 0) {
                         OutR.setPower(right_power);
