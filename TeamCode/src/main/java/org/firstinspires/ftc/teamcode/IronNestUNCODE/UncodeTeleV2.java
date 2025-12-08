@@ -7,15 +7,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.teamcode.util.control.Controller;
 import org.firstinspires.ftc.teamcode.util.control.PIDController;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import java.util.List;
-import java.util.Locale;
+
+import java.util.concurrent.TimeUnit;
+
 @Configurable
 @TeleOp(name="V2-tele")
 public class UncodeTeleV2 extends LinearOpMode{
@@ -61,7 +62,6 @@ public class UncodeTeleV2 extends LinearOpMode{
             OutR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
             OutL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-            initAprilTag();
             VelocityControlRight.enable();
             VelocityControlRight.setSetpoint(TargetVelocityRight);
             VelocityControlRight.setOutputRange(0,1);
@@ -70,6 +70,10 @@ public class UncodeTeleV2 extends LinearOpMode{
             VelocityControlLeft.setOutputRange(0,1);
 
 
+            AutoDriveToApriltag Automode = new AutoDriveToApriltag(FL, FR, BL, BR); //sends these motors to the class and they will be controlled in the loop.
+            if (USE_WEBCAM)
+                setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
+
             Controller Gamepad1 = new Controller(gamepad1);
             waitForStart();
 
@@ -77,8 +81,6 @@ public class UncodeTeleV2 extends LinearOpMode{
             while (opModeIsActive()) {
                 double Actual_velocityL = OutL.getVelocity();
                 double Actual_velocityR = OutR.getVelocity();
-
-                telemetryAprilTag();
                 double y = -Gamepad1.left_stick_y;
                 double x = Gamepad1.left_stick_x;
                 double rx = Gamepad1.right_stick_x;
@@ -141,50 +143,46 @@ public class UncodeTeleV2 extends LinearOpMode{
                     OutL.setPower(0);
                     OutR.setPower(0);
                 }
+
+                Automode.approachApriltagManually();
                 Gamepad1.update();
                 telemetry.update();
             }
 
 
     }
-    private void initAprilTag() {
+    private void  setManualExposure(int exposureMS, int gain) {
+        // Wait for the camera to be open, then use the controls
 
-        // Create the AprilTag processor the easy way.
-        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
-
-        // Create the vision portal the easy way.
-        if (USE_WEBCAM) {
-            visionPortal = VisionPortal.easyCreateWithDefaults(
-                    hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
-        } else {
-            visionPortal = VisionPortal.easyCreateWithDefaults(
-                    BuiltinCameraDirection.BACK, aprilTag);
+        if (visionPortal == null) {
+            return;
         }
 
-    }
-    private void telemetryAprilTag() {
-
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        telemetry.addData("# AprilTags Detected", currentDetections.size());
-
-        // Step through the list of detections and display info for each one.
-        for (AprilTagDetection detection : currentDetections) {
-            if (detection.metadata != null) {
-                telemetry.addLine(String.format(Locale.US, "\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                telemetry.addLine(String.format(Locale.US, "XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                telemetry.addLine(String.format(Locale.US, "PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                telemetry.addLine(String.format(Locale.US, "RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
-            } else {
-                telemetry.addLine(String.format(Locale.US, "\n==== (ID %d) Unknown", detection.id));
-                telemetry.addLine(String.format(Locale.US, "Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
             }
-        }   // end for() loop
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
 
-        // Add "key" information to telemetry
-        telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
-        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
-        telemetry.addLine("RBE = Range, Bearing & Elevation");
-
-    }   // end method telemetryAprilTag()
-
+        // Set camera controls unless we are stopping.
+        if (!isStopRequested())
+        {
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                sleep(50);
+            }
+            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            sleep(20);
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
+            sleep(20);
+        }
+    }
 }
+
