@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.teamcode.util.control.Controller;
@@ -24,9 +26,7 @@ public class UncodeTeleV2 extends LinearOpMode{
     PIDController VelocityControlLeft = new PIDController(Speed_Gain,0, Braking_gain);
     private AprilTagProcessor aprilTag; // AprilTag processor object
     private VisionPortal visionPortal; // Vision portal object
-
-    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
-
+    final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
     public static final int TargetVelocityRight = 26300;
     public static final int TargetVelocityLeft = -26300;
     public static final double Speed_Gain = 1.2  ;
@@ -70,17 +70,16 @@ public class UncodeTeleV2 extends LinearOpMode{
             VelocityControlLeft.setOutputRange(0,1);
 
 
-            AutoDriveToApriltag Automode = new AutoDriveToApriltag(FL, FR, BL, BR); //sends these motors to the class and they will be controlled in the loop.
-            if (USE_WEBCAM)
-                setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
 
+            initAprilTag();
+            if (USE_WEBCAM)
+                setManualExposure();  // Use low exposure time to reduce motion blur
+            AprilTagTracker AutoMode = new AprilTagTracker(FL, FR, BL, BR, aprilTag); //sends these motors to the class and they will be controlled in the loop.
             Controller Gamepad1 = new Controller(gamepad1);
             waitForStart();
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
-                double Actual_velocityL = OutL.getVelocity();
-                double Actual_velocityR = OutR.getVelocity();
                 double y = -Gamepad1.left_stick_y;
                 double x = Gamepad1.left_stick_x;
                 double rx = Gamepad1.right_stick_x;
@@ -144,14 +143,15 @@ public class UncodeTeleV2 extends LinearOpMode{
                     OutR.setPower(0);
                 }
 
-                Automode.approachApriltagManually();
+                AutoMode.approachApriltagManually();
+
                 Gamepad1.update();
                 telemetry.update();
             }
 
 
     }
-    private void  setManualExposure(int exposureMS, int gain) {
+    private void  setManualExposure() {
         // Wait for the camera to be open, then use the controls
 
         if (visionPortal == null) {
@@ -177,11 +177,39 @@ public class UncodeTeleV2 extends LinearOpMode{
                 exposureControl.setMode(ExposureControl.Mode.Manual);
                 sleep(50);
             }
-            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            exposureControl.setExposure(6, TimeUnit.MILLISECONDS);
             sleep(20);
             GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
-            gainControl.setGain(gain);
+            gainControl.setGain(250);
             sleep(20);
+        }
+
+    }
+
+    private void initAprilTag() {
+        // Create the AprilTag processor by using a builder.
+        aprilTag = new AprilTagProcessor.Builder().build();
+
+        // Adjust Image Decimation to trade-off detection-range for detection-rate.
+        // e.g. Some typical detection data using a Logitech C920 WebCam
+        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
+        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
+        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
+        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
+        // Note: Decimation can be changed on-the-fly to adapt during a match.
+        aprilTag.setDecimation(2);
+
+        // Create the vision portal by using a builder.
+        if (USE_WEBCAM) {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                    .addProcessor(aprilTag)
+                    .build();
+        } else {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(BuiltinCameraDirection.BACK)
+                    .addProcessor(aprilTag)
+                    .build();
         }
     }
 }

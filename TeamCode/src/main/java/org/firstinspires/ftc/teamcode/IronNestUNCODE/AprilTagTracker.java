@@ -1,45 +1,74 @@
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-public class AutoDriveToApriltag {
-    final double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
+@Configurable
+public class AprilTagTracker {
+    public static double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
+
+    public double getSPEED_GAIN() {
+        return SPEED_GAIN;
+    }
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
     //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
-    final double SPEED_GAIN = 0.02;   //  Forward Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
-    final double STRAFE_GAIN = 0.015;   //  Strafe Speed Control "Gain".  e.g. Ramp up to 37% power at a 25 degree Yaw error.   (0.375 / 25.0)
-    final double TURN_GAIN = 0.01;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+    public static  double SPEED_GAIN = 0.02;   //  Forward Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
 
-    final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_STRAFE = 0.5;   //  Clip the strafing speed to this max value (adjust for your robot)
-    final double MAX_AUTO_TURN = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
+    public double getSTRAFE_GAIN() {
+        return STRAFE_GAIN;
+    }
 
-    private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
+    public static double STRAFE_GAIN = 0.015;   //  Strafe Speed Control "Gain".  e.g. Ramp up to 37% power at a 25 degree Yaw error.   (0.375 / 25.0)
+
+    public double getTURN_GAIN() {
+        return TURN_GAIN;
+    }
+
+    public static double TURN_GAIN = 0.01;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+
+    public double getMAX_AUTO_SPEED() {
+        return MAX_AUTO_SPEED;
+    }
+
+    public static double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
+
+   public double getMAX_AUTO_STRAFE() {
+        return MAX_AUTO_STRAFE;
+    }
+
+   public static double MAX_AUTO_STRAFE = 0.5;   //  Clip the strafing speed to this max value (adjust for your robot)
+
+    public double getMAX_AUTO_TURN() {
+        return MAX_AUTO_TURN;
+    }
+
+    public static double MAX_AUTO_TURN = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
+
+    public static AprilTagProcessor apriltag;
     private static final int DESIRED_TAG_ID = -1;     // Choose the tag you want to approach or set to -1 for ANY tag.
-    private VisionPortal visionPortal;               // Used to manage the video source.
-    private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
+
+    private AprilTagDetection getDesiredTag() {
+        return desiredTag;
+    }
+
     private AprilTagDetection desiredTag;     // Used to hold the data for a detected AprilTag
     private final DcMotor frontLeftDrive;  //  Used to control the left front drive wheel
     private final DcMotor frontRightDrive;  //  Used to control the right front drive wheel
     private final DcMotor backLeftDrive;  //  Used to control the left back drive wheel
     private final DcMotor backRightDrive;  //  Used to control the right back drive wheel
 
-    public AutoDriveToApriltag (DcMotor frontLeftDrive, DcMotor frontRightDrive, DcMotor backLeftDrive, DcMotor backRightDrive){
+    public AprilTagTracker(DcMotor frontLeftDrive, DcMotor frontRightDrive, DcMotor backLeftDrive, DcMotor backRightDrive, AprilTagProcessor aprilTag){
         this.frontLeftDrive = frontLeftDrive;
         this.frontRightDrive = frontRightDrive;
         this.backLeftDrive = backLeftDrive;
@@ -54,8 +83,7 @@ public class AutoDriveToApriltag {
         frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Initialize the Apriltag Detection process
-        initAprilTag();
+        this.apriltag = aprilTag;
         telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch START to start OpMode");
         telemetry.update();
@@ -64,9 +92,9 @@ public class AutoDriveToApriltag {
         lookForApriltags();
         if (gamepad1.left_bumper && lookForApriltags()){
             // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-            double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-            double  headingError    = desiredTag.ftcPose.bearing;
-            double  yawError        = desiredTag.ftcPose.yaw;
+            double  rangeError      = (this.desiredTag.ftcPose.range - DESIRED_DISTANCE);
+            double  headingError    = this.desiredTag.ftcPose.bearing;
+            double  yawError        = this.desiredTag.ftcPose.yaw;
 
             // Use the speed and turn "gains" to calculate how we want the robot to move.
             double drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
@@ -74,15 +102,22 @@ public class AutoDriveToApriltag {
             double strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
             telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+            telemetry.addData("check desired tag is not null" ,this.getDesiredTag());
+            telemetry.addData("forward reactiveness",this.getSPEED_GAIN());
+            telemetry.addData("turning reactiveness",this.getTURN_GAIN());
+            telemetry.addData("Max forward speed",this.getMAX_AUTO_SPEED());
+            telemetry.addData("Max turn speed",this.getMAX_AUTO_TURN());
+            telemetry.update();
             moveRobot(-drive, -strafe, turn);
         }
     }
     public boolean lookForApriltags() {
+        desiredTag = this.desiredTag;
         boolean targetFound = false;
         desiredTag = null;
 
         // Step through the list of detected tags and look for a matching tag
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        List<AprilTagDetection> currentDetections = this.apriltag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
             // Look to see if we have size info on this tag.
             if (detection.metadata != null) {
@@ -144,33 +179,5 @@ public class AutoDriveToApriltag {
         FR.setPower(frontRightPower);
         BL.setPower(backLeftPower);
         BR.setPower(backRightPower);
-    }
-
-
-    private void initAprilTag() {
-        // Create the AprilTag processor by using a builder.
-        aprilTag = new AprilTagProcessor.Builder().build();
-
-        // Adjust Image Decimation to trade-off detection-range for detection-rate.
-        // e.g. Some typical detection data using a Logitech C920 WebCam
-        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
-        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
-        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
-        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
-        // Note: Decimation can be changed on-the-fly to adapt during a match.
-        aprilTag.setDecimation(2);
-
-        // Create the vision portal by using a builder.
-        if (USE_WEBCAM) {
-            visionPortal = new VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                    .addProcessor(aprilTag)
-                    .build();
-        } else {
-            visionPortal = new VisionPortal.Builder()
-                    .setCamera(BuiltinCameraDirection.BACK)
-                    .addProcessor(aprilTag)
-                    .build();
-        }
     }
     }

@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name = "Test Telemetry Panels Style", group = "Dev")
 public class TestTelemetryPanelsStyle extends OpMode {
 
+
     private TelemetryManager panelsTelemetry;
 
     @Override
