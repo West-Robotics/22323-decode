@@ -1,19 +1,22 @@
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.util.control.Controller;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
 @Configurable
-public class AprilTagTracker {
+public class AprilTagTracker{
+
     public static double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
 
     public double getSPEED_GAIN() {
@@ -55,7 +58,7 @@ public class AprilTagTracker {
 
     public static double MAX_AUTO_TURN = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
 
-    public static AprilTagProcessor apriltag;
+    public  AprilTagProcessor apriltag;
     private static final int DESIRED_TAG_ID = -1;     // Choose the tag you want to approach or set to -1 for ANY tag.
 
     private AprilTagDetection getDesiredTag() {
@@ -63,16 +66,22 @@ public class AprilTagTracker {
     }
 
     private AprilTagDetection desiredTag;     // Used to hold the data for a detected AprilTag
+
     private final DcMotor frontLeftDrive;  //  Used to control the left front drive wheel
     private final DcMotor frontRightDrive;  //  Used to control the right front drive wheel
     private final DcMotor backLeftDrive;  //  Used to control the left back drive wheel
     private final DcMotor backRightDrive;  //  Used to control the right back drive wheel
+    private Controller gamepad;
+    private Telemetry telemetry;
+    private HardwareMap hardwareMap;
+    private TelemetryManager panelsTelemetry;
 
-    public AprilTagTracker(DcMotor frontLeftDrive, DcMotor frontRightDrive, DcMotor backLeftDrive, DcMotor backRightDrive, AprilTagProcessor aprilTag){
+    public AprilTagTracker(HardwareMap hardwareMap, DcMotor frontLeftDrive, DcMotor frontRightDrive, DcMotor backLeftDrive, DcMotor backRightDrive, AprilTagProcessor aprilTag, Controller Gamepad1){
         this.frontLeftDrive = frontLeftDrive;
         this.frontRightDrive = frontRightDrive;
         this.backLeftDrive = backLeftDrive;
         this.backRightDrive = backRightDrive;
+        this.hardwareMap = hardwareMap;
 
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -82,15 +91,13 @@ public class AprilTagTracker {
         backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         this.apriltag = aprilTag;
-        telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch START to start OpMode");
-        telemetry.update();
+        this.gamepad = Gamepad1;
     }
     public void approachApriltagManually(){
         lookForApriltags();
-        if (gamepad1.left_bumper && lookForApriltags()){
+        if (this.desiredTag != null && this.gamepad.leftBumper() && lookForApriltags()){
             // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
             double  rangeError      = (this.desiredTag.ftcPose.range - DESIRED_DISTANCE);
             double  headingError    = this.desiredTag.ftcPose.bearing;
@@ -100,21 +107,14 @@ public class AprilTagTracker {
             double drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
             double turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
             double strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-
-            telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
-            telemetry.addData("check desired tag is not null" ,this.getDesiredTag());
-            telemetry.addData("forward reactiveness",this.getSPEED_GAIN());
-            telemetry.addData("turning reactiveness",this.getTURN_GAIN());
-            telemetry.addData("Max forward speed",this.getMAX_AUTO_SPEED());
-            telemetry.addData("Max turn speed",this.getMAX_AUTO_TURN());
-            telemetry.update();
             moveRobot(-drive, -strafe, turn);
+            panelsTelemetry.debug("String 1", "String 2", "String 3", new TestTelemetryPanelsStyle.CustomObject(11));
+            panelsTelemetry.update();
         }
     }
     public boolean lookForApriltags() {
-        desiredTag = this.desiredTag;
         boolean targetFound = false;
-        desiredTag = null;
+        this.desiredTag = null;
 
         // Step through the list of detected tags and look for a matching tag
         List<AprilTagDetection> currentDetections = this.apriltag.getDetections();
@@ -125,27 +125,20 @@ public class AprilTagTracker {
                 if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
                     // Yes, we want to use this tag.
                     targetFound = true;
-                    desiredTag = detection;
+                    this.desiredTag = detection;
                     break;  // don't look any further.
                 } else {
                     // This tag is in the library, but we do not want to track it right now.
-                    telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                 targetFound = false;
                 }
             } else {
                 // This tag is NOT in the library, so we don't have enough information to track to it.
-                telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+                targetFound = false;
             }
         }
         if (targetFound) {
-            telemetry.addData("\n>","HOLD Left-Bumper to Drive to Target\n");
-            telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-            telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
-            telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
-            telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
-            telemetry.update();
             return true;
         } else {
-            telemetry.addData("\n>","Drive using joysticks to find valid target\n");
             return false;
         }
     }

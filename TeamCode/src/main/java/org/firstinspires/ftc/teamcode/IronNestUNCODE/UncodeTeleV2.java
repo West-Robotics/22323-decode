@@ -1,13 +1,18 @@
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -31,7 +36,6 @@ public class UncodeTeleV2 extends LinearOpMode{
     public static final int TargetVelocityLeft = -26300;
     public static final double Speed_Gain = 1.2  ;
     private static final double Braking_gain = 1.2;
-
     @Override
         public void runOpMode() {
 
@@ -62,7 +66,6 @@ public class UncodeTeleV2 extends LinearOpMode{
             OutR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
             OutL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-            VelocityControlRight.enable();
             VelocityControlRight.setSetpoint(TargetVelocityRight);
             VelocityControlRight.setOutputRange(0,1);
             VelocityControlLeft.enable();
@@ -74,12 +77,18 @@ public class UncodeTeleV2 extends LinearOpMode{
             initAprilTag();
             if (USE_WEBCAM)
                 setManualExposure();  // Use low exposure time to reduce motion blur
-            AprilTagTracker AutoMode = new AprilTagTracker(FL, FR, BL, BR, aprilTag); //sends these motors to the class and they will be controlled in the loop.
+
+            telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
+            telemetry.addData(">", "Touch START to start OpMode");
+            telemetry.update();//sends these motors to the class and they will be controlled in the loop.
             Controller Gamepad1 = new Controller(gamepad1);
+
+            AprilTagTracker AutoMode = new AprilTagTracker(hardwareMap, FL, FR, BL, BR, aprilTag, Gamepad1);
             waitForStart();
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
+                AutoMode.approachApriltagManually();
                 double y = -Gamepad1.left_stick_y;
                 double x = Gamepad1.left_stick_x;
                 double rx = Gamepad1.right_stick_x;
@@ -107,8 +116,8 @@ public class UncodeTeleV2 extends LinearOpMode{
                     liftL.setPosition(0.01);
                     liftR.setPosition(0.99);
                 }else{
-                        liftL.setPosition(0.18);
-                        liftR.setPosition(0.7);
+                        liftL.setPosition(0.215);
+                        liftR.setPosition(0.785);
                 }
 
                 // Intake controls
@@ -129,21 +138,21 @@ public class UncodeTeleV2 extends LinearOpMode{
                     telemetry.addData("left wheel velocity", OutL.getVelocity());
                     telemetry.addData("right wheel power inputs", right_power);
                     telemetry.addData("right wheel velocity ", OutR.getVelocity());
+                    telemetry.update();
                     if (left_power < 0) {
-                        OutL.setPower(left_power);
+                        OutL.setPower(0);
                     }
                     if (right_power > 0) {
-                        OutR.setPower(right_power);
+                        OutR.setPower(0);
                     }else{
                         telemetry.addLine("PID IS DOING WEIRD THINGS");
+                        telemetry.addLine("testing");
                     }
                     telemetry.update();
                 } else{
                     OutL.setPower(0);
                     OutR.setPower(0);
                 }
-
-                AutoMode.approachApriltagManually();
 
                 Gamepad1.update();
                 telemetry.update();

@@ -20,9 +20,9 @@ public class TestTelemetryPanelsStyle extends OpMode {
     @Override
     public void loop() {
         panelsTelemetry.addData("Key", "Value");
-        panelsTelemetry.addData("Key2", new CustomObject(10));
+        panelsTelemetry.addData("Key2", new CustomObject(11));
 
-        panelsTelemetry.debug("String 1", "String 2", "String 3", new CustomObject(10));
+        panelsTelemetry.debug("String 1", "String 2", "String 3", new CustomObject(11));
 
         // Update both Panels and FTC telemetry
         panelsTelemetry.update(telemetry);

@@ -38,8 +38,20 @@ android {
     }
 }
 
+repositories {
+    // Dairy releases repository
+    maven {
+        url = "https://repo.dairy.foundation/releases"
+    }
+    // Dairy snapshots repository
+    maven {
+        url = "https://repo.dairy.foundation/snapshots"
+    }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
+    implementation("dev.frozenmilk.sinister:Sloth:0.2.4")
 }
 // At the bottom of TeamCode/build.gradle
 tasks.named("deploySloth") {
