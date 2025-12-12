@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.pedropathing.Drivetrain;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -36,8 +38,9 @@ public abstract class  Base_Robot extends LinearOpMode {
 
     public Controller Gamepad1, Gamepad2;
 
-    public static final  double flywheelk_P = 1.2 ;
-    public static final  double flywheelk_D = 1.5;
+    public static double flywheelk_P = 0.001 ;
+    public static double flywheelk_D = 0.0000000000001;
+    public  static double flywheelk_i = 0.0001;
 
     private PIDController leftFlywheelController;
     private PIDController rightFlywheelController;
@@ -74,8 +77,8 @@ public abstract class  Base_Robot extends LinearOpMode {
     public void init_flywheels() {
         // Initialize the PID controllers with your chosen gains
         // We are not using an Integral term (Ki=0.0) for this simple velocity controller
-        leftFlywheelController = new PIDController(flywheelk_P, 0.0, flywheelk_D);
-        rightFlywheelController = new PIDController(flywheelk_P, 0.0, flywheelk_D);
+        leftFlywheelController = new PIDController(flywheelk_P,flywheelk_i, flywheelk_D);
+        rightFlywheelController = new PIDController(flywheelk_P, flywheelk_i, flywheelk_D);
 
         // Set output range for the PID controllers to match motor power range
         leftFlywheelController.setOutputRange(0, 1.0);
@@ -104,11 +107,9 @@ public abstract class  Base_Robot extends LinearOpMode {
         // Get the current velocity from the motors
         double currentLeftVelocity = OutL.getVelocity();
         double currentRightVelocity = OutR.getVelocity();
-
         // Calculate the power adjustment using the PID controllers
         leftFlywheelPower = leftFlywheelController.performPID(currentLeftVelocity);
         rightFlywheelPower = rightFlywheelController.performPID(currentRightVelocity);
-
         // Apply the calculated power to the motors
         OutL.setPower(leftFlywheelPower);
         OutR.setPower(rightFlywheelPower);
@@ -175,8 +176,14 @@ public abstract class  Base_Robot extends LinearOpMode {
         }
 
     }
+    public void moveRobot(){
+        double x = Gamepad1.left_stick_x;
+        double y = -Gamepad1.left_stick_y;
+        double yaw = -Gamepad1.right_stick_x;
+        calculatePower(x,y,yaw);
+    }
 
-    private void moveRobot ( double x, double y, double yaw){
+    private void calculatePower( double x, double y, double yaw){
 
         DcMotor FL = this.FL;
         DcMotor FR = this.FR;
