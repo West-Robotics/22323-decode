@@ -1,24 +1,26 @@
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.bylazar.gamepad.GamepadManager;
-import com.bylazar.gamepad.PanelsGamepad;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 @Configurable
-@TeleOp(name = "Subsystem test")
+@TeleOp(name = "TeleV3", group = "TeleOp")
 public class TeleV3 extends Base_Robot{
     public TelemetryManager panelsTelemetry;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        init_drivetrain();
+        init_motor();
         init_flywheels();
         setFlywheelVelocity(2630);
+
+        init_vision();
+        if(USE_WEBCAM)
+            setManualExposure();
+
 
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -26,14 +28,17 @@ public class TeleV3 extends Base_Robot{
          double rightFlywheelVelocity = OutR.getVelocity();
 
         waitForStart();
+
         while (opModeIsActive()){
-        panelsTelemetry.debug(leftFlywheelVelocity, rightFlywheelVelocity, getTargetFlywheelVelocity());
-        panelsTelemetry.addData("left flywheel velocity readings",OutL.getVelocity());
-        panelsTelemetry.addData("right flywheel velocity readings", OutR.getVelocity());
-        panelsTelemetry.addData("Target velocity", getTargetFlywheelVelocity());
-        moveFlywheels();
+
+        controlFlywheels();
+        manageIntake();
+        manage_servos();
         moveRobot();
+        approachApriltags();
+        panelsTelemetry.debug("Apriltag detected:" + lookForAprilTags());
         panelsTelemetry.update(telemetry);
+        telemetry.update();
         }
     }
 }

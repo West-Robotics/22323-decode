@@ -1,31 +1,30 @@
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.pedropathing.Drivetrain;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
-import org.firstinspires.ftc.teamcode.util.control.Controller;
 import org.firstinspires.ftc.teamcode.util.control.PIDController;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import com.qualcomm.robotcore.util.Range;
+
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.robotcore.util.Range;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Configurable
 public abstract class  Base_Robot extends LinearOpMode {
+    private static double MAX_AUTO_TURN = 0.3, MAX_AUTO_STRAFE = 0.5, MAX_AUTO_SPEED = 0.5;
+    private static double DESIRED_DISTANCE = 12, SPEED_GAIN = 0.02, TURN_GAIN = 0.01, STRAFE_GAIN = 0.015;
     public DcMotorEx FR, FL, BR, BL, OutL, OutR, In;
     public AprilTagProcessor apriltag;
 
@@ -35,8 +34,6 @@ public abstract class  Base_Robot extends LinearOpMode {
     public AprilTagDetection desiredTag;
 
     public Servo liftL, liftR;
-
-    public Controller Gamepad1, Gamepad2;
 
     public static double flywheelk_P = 0.001 ;
     public static double flywheelk_D = 0.0000000000001;
@@ -49,7 +46,7 @@ public abstract class  Base_Robot extends LinearOpMode {
     public double rightFlywheelPower = 0;
     public boolean targetFound= false;
 
-    public void init_drivetrain(){
+    public void init_motor(){
         this.FL = hardwareMap.get(DcMotorEx.class, "FrontL");
         this.FR = hardwareMap.get(DcMotorEx.class, "FrontR");
         this.BR = hardwareMap.get(DcMotorEx.class, "BackR");
@@ -59,9 +56,6 @@ public abstract class  Base_Robot extends LinearOpMode {
         this.In = hardwareMap.get(DcMotorEx.class, "intake");
         this.OutL = hardwareMap.get(DcMotorEx.class, "outtakeL");
         this.OutR = hardwareMap.get(DcMotorEx.class, "outtakeR");
-
-        this.Gamepad1 = new Controller(gamepad1);
-        this.Gamepad2 = new Controller(gamepad2);
 
         FR.setDirection(DcMotorSimple.Direction.FORWARD);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -103,7 +97,7 @@ public abstract class  Base_Robot extends LinearOpMode {
      * This method MUST be called in the main loop of your OpMode.
      * It calculates and applies the necessary power to the flywheels to maintain the target velocity.
      */
-    public void moveFlywheels() {
+    public void controlFlywheels() {
         // Get the current velocity from the motors
         double currentLeftVelocity = OutL.getVelocity();
         double currentRightVelocity = OutR.getVelocity();
@@ -115,8 +109,30 @@ public abstract class  Base_Robot extends LinearOpMode {
             OutL.setPower(leftFlywheelPower);
             OutR.setPower(rightFlywheelPower);
         }
-    }
+        else {
+            OutL.setPower(0);
+            OutR.setPower(0);
+        }
 
+    }
+    public void manageIntake(){
+        if(gamepad1.left_trigger>.2||gamepad2.left_trigger>.2){
+            In.setPower(-1);
+        }else if(gamepad1.left_bumper||gamepad2.left_bumper){
+            In.setPower(0.25);
+        }else{
+            In.setPower(0);
+        }
+    }
+    public void manage_servos(){
+        if(gamepad1.a){
+            liftL.setPosition(0.01);
+            liftR.setPosition(0.99);
+        }else {
+            liftR.setPosition(0.785);
+            liftL.setPosition(0.215);
+        }
+    }
     public void init_vision(){
             // Create the AprilTag processor by using a builder.
             apriltag = new AprilTagProcessor.Builder().build();
@@ -144,7 +160,7 @@ public abstract class  Base_Robot extends LinearOpMode {
             }
     }
 
-    private void  setManualExposure() {
+    public void  setManualExposure() {
         // Wait for the camera to be open, then use the controls
 
         if (visionPortal == null) {
@@ -238,13 +254,26 @@ public abstract class  Base_Robot extends LinearOpMode {
                 targetFound = false;
             }
         }
-        if (targetFound) {
-            return true;
-        } else {
-            return false;
+        return targetFound;
+    }
+    public void approachApriltags(){
+        lookForAprilTags();
+        if (this.desiredTag != null && gamepad1.left_bumper && lookForAprilTags()){
+            // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+            double  rangeError      = (this.desiredTag.ftcPose.range - DESIRED_DISTANCE);
+            double  headingError    = this.desiredTag.ftcPose.bearing;
+            double  yawError        = this.desiredTag.ftcPose.yaw;
+
+            // Use the speed and turn "gains" to calculate how we want the robot to move.
+            double drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+            double turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+            double strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+            telemetry.addLine("Moving to apriltag...");
+            calculatePower(drive,strafe,turn);
+            telemetry.addLine("power to robot: x,y,turn"+drive+","+strafe+","+turn);
+            telemetry.update();
         }
     }
-
     public double getTargetFlywheelVelocity() {
         return targetFlywheelVelocity;
     }
