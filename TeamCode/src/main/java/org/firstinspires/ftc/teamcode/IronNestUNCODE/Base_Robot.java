@@ -108,11 +108,13 @@ public abstract class  Base_Robot extends LinearOpMode {
         double currentLeftVelocity = OutL.getVelocity();
         double currentRightVelocity = OutR.getVelocity();
         // Calculate the power adjustment using the PID controllers
-        leftFlywheelPower = leftFlywheelController.performPID(currentLeftVelocity);
-        rightFlywheelPower = rightFlywheelController.performPID(currentRightVelocity);
-        // Apply the calculated power to the motors
-        OutL.setPower(leftFlywheelPower);
-        OutR.setPower(rightFlywheelPower);
+        if (gamepad1.left_trigger>0) {
+            leftFlywheelPower = leftFlywheelController.performPID(currentLeftVelocity);
+            rightFlywheelPower = rightFlywheelController.performPID(currentRightVelocity);
+            // Apply the calculated power to the motors
+            OutL.setPower(leftFlywheelPower);
+            OutR.setPower(rightFlywheelPower);
+        }
     }
 
     public void init_vision(){
@@ -177,10 +179,10 @@ public abstract class  Base_Robot extends LinearOpMode {
 
     }
     public void moveRobot(){
-        double x = Gamepad1.left_stick_x;
-        double y = -Gamepad1.left_stick_y;
-        double yaw = -Gamepad1.right_stick_x;
-        calculatePower(x,y,yaw);
+        double x = gamepad1.left_stick_x;
+        double y = -gamepad1.left_stick_y;
+        double yaw = -gamepad1.right_stick_x;
+        calculatePower(y,x,yaw);
     }
 
     private void calculatePower( double x, double y, double yaw){
