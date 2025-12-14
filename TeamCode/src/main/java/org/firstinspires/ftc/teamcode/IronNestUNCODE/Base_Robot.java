@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
+import com.bylazar.gamepad.GamepadManager;
+import com.bylazar.gamepad.PanelsGamepad;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -23,28 +27,37 @@ import java.util.concurrent.TimeUnit;
 
 @Configurable
 public abstract class  Base_Robot extends LinearOpMode {
-    private static double MAX_AUTO_TURN = 0.3, MAX_AUTO_STRAFE = 0.5, MAX_AUTO_SPEED = 0.5;
-    private static double DESIRED_DISTANCE = 12, SPEED_GAIN = 0.02, TURN_GAIN = 0.01, STRAFE_GAIN = 0.015;
+    public static double MAX_AUTO_TURN = 1, MAX_AUTO_STRAFE = 0.5, MAX_AUTO_SPEED = 1;
+    public static double DESIRED_DISTANCE = 48,SPEED_GAIN = 0.5,TURN_GAIN = 0.5;
+    public static double flywheelk_P = 0.001,flywheelk_D = 0.0000000000001, flywheelk_i = 0.0001;
+    private static double STRAFE_GAIN = 0.015;
     public DcMotorEx FR, FL, BR, BL, OutL, OutR, In;
     public AprilTagProcessor apriltag;
-
     public VisionPortal visionPortal;
     final boolean USE_WEBCAM = true;
     public static final int DESIRED_TAG_ID = -1;
     public AprilTagDetection desiredTag;
-
     public Servo liftL, liftR;
-
-    public static double flywheelk_P = 0.001 ;
-    public static double flywheelk_D = 0.0000000000001;
-    public  static double flywheelk_i = 0.0001;
-
     private PIDController leftFlywheelController;
     private PIDController rightFlywheelController;
     private double targetFlywheelVelocity = 0;
     public double leftFlywheelPower = 0;
     public double rightFlywheelPower = 0;
     public boolean targetFound= false;
+    public TelemetryManager panelsTelemetry;
+    public GamepadManager g1_panels_manager;
+    public GamepadManager g2_panels_manager;
+    public double rangeError, headingError, yawError;
+    public double drive,turn,strafe;
+
+    /*
+    TO DO:
+    - calibrate the camera using the tutorial found here: https://ftc-docs.firstinspires.org/en/latest/programming_resources/vision/camera_calibration/camera-calibration.html
+    - test and run teleop. make sure nothing is inverted and basic functionality works
+    - test auto aim:
+      - graph the variables in ftc panels and get a sense of what is happening and why the auto aim keeps going straight into the apriltag even after reaching desired distance
+
+     */
 
     public void init_motor(){
         this.FL = hardwareMap.get(DcMotorEx.class, "FrontL");
@@ -67,6 +80,11 @@ public abstract class  Base_Robot extends LinearOpMode {
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
+
+        // 2. Initialize the PanelsGamepad managers
+        g1_panels_manager = PanelsGamepad.INSTANCE.getFirstManager();
+        g2_panels_manager = PanelsGamepad.INSTANCE.getSecondManager();
     }
     public void init_flywheels() {
         // Initialize the PID controllers with your chosen gains
@@ -197,35 +215,22 @@ public abstract class  Base_Robot extends LinearOpMode {
     public void moveRobot(){
         double x = gamepad1.left_stick_x;
         double y = -gamepad1.left_stick_y;
-        double yaw = -gamepad1.right_stick_x;
-        calculatePower(y,x,yaw);
+        double yaw = gamepad1.right_stick_x;
+        calculatePower(x,y,yaw);
     }
 
-    private void calculatePower( double x, double y, double yaw){
+    private void calculatePower(double x, double y, double yaw){
 
         DcMotor FL = this.FL;
         DcMotor FR = this.FR;
         DcMotor BL = this.BL;
         DcMotor BR = this.BR;
 
-        // Calculate wheel powers.
-        double frontLeftPower = x - y - yaw;
-        double frontRightPower = x + y + yaw;
-        double backLeftPower = x + y - yaw;
-        double backRightPower = x - y + yaw;
-        // this is the configuration for the robot wheels during auto. If the robot already doesn't behave as you want it to then you should change this.
-
-        // Normalize wheel powers to be less than 1.0
-        double max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
-        max = Math.max(max, Math.abs(backLeftPower));
-        max = Math.max(max, Math.abs(backRightPower));
-
-        if (max > 1.0) {
-            frontLeftPower /= max;
-            frontRightPower /= max;
-            backLeftPower /= max;
-            backRightPower /= max;
-        }
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(yaw), 1);
+        double frontLeftPower = (y + x + yaw) / denominator;
+        double backLeftPower = (y - x + yaw) / denominator;
+        double frontRightPower = (y - x - yaw) / denominator;
+        double backRightPower = (y + x - yaw) / denominator;
 
         // Send powers to the wheels.
         FL.setPower(frontLeftPower);
@@ -242,7 +247,10 @@ public abstract class  Base_Robot extends LinearOpMode {
                 //  Check to see if we want to track towards this tag.
                 if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
                     // Yes, we want to use this tag.
-                    targetFound = true;
+                    telemetry.addLine("found tag"+detection.id);
+                    telemetry.update();
+                    if (detection.id == DESIRED_TAG_ID)
+                        targetFound = true;
                     this.desiredTag = detection;
                     break;  // don't look any further.
                 } else {
@@ -258,20 +266,17 @@ public abstract class  Base_Robot extends LinearOpMode {
     }
     public void approachApriltags(){
         lookForAprilTags();
-        if (this.desiredTag != null && gamepad1.left_bumper && lookForAprilTags()){
+        if (desiredTag != null && gamepad1.right_bumper && targetFound){
+
             // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-            double  rangeError      = (this.desiredTag.ftcPose.range - DESIRED_DISTANCE);
-            double  headingError    = this.desiredTag.ftcPose.bearing;
-            double  yawError        = this.desiredTag.ftcPose.yaw;
+            rangeError      = (this.desiredTag.ftcPose.range - DESIRED_DISTANCE);
+            headingError    = this.desiredTag.ftcPose.bearing;
+            yawError        = this.desiredTag.ftcPose.yaw;
 
             // Use the speed and turn "gains" to calculate how we want the robot to move.
-            double drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-            double turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-            double strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-            telemetry.addLine("Moving to apriltag...");
-            calculatePower(drive,strafe,turn);
-            telemetry.addLine("power to robot: x,y,turn"+drive+","+strafe+","+turn);
-            telemetry.update();
+            drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+            turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+            calculatePower(0,drive,turn);
         }
     }
     public double getTargetFlywheelVelocity() {
@@ -281,4 +286,9 @@ public abstract class  Base_Robot extends LinearOpMode {
     public void setTargetFlywheelVelocity(double targetFlywheelVelocity) {
         this.targetFlywheelVelocity = targetFlywheelVelocity;
     }
+    public void updateGamepads() {
+        g1_panels_manager.asCombinedFTCGamepad(gamepad1);
+        g2_panels_manager.asCombinedFTCGamepad(gamepad2);
+    }
+
 }

@@ -1,3 +1,4 @@
+
 //
 // build.gradle in TeamCode
 //
@@ -14,15 +15,28 @@
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
+apply plugin: 'kotlin-android'
 
 buildscript {
+    ext.kotlin_version = '1.8.22'
     repositories {
+        google()
         mavenCentral()
     }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+repositories {
+    google()
+    mavenCentral()
 }
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
 android {
