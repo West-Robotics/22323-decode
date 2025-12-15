@@ -58,11 +58,11 @@ import java.util.Locale;
  */
 
 @TeleOp(name = "Utility: Camera Frame Capture", group = "Utility")
-@Disabled
 public class Calibrating extends LinearOpMode
 {
     /*
      * EDIT THESE PARAMETERS AS NEEDED
+     *
      */
     final boolean USING_WEBCAM = true;
     final BuiltinCameraDirection INTERNAL_CAM_DIR = BuiltinCameraDirection.BACK;
