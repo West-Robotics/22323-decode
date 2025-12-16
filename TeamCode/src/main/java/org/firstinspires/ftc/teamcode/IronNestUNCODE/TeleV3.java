@@ -1,58 +1,53 @@
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
-import com.bylazar.camerastream.PanelsCameraStream;
 import com.bylazar.configurables.annotations.Configurable;
-import com.bylazar.telemetry.PanelsTelemetry;
-import com.bylazar.telemetry.TelemetryManager;
-
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
-import org.firstinspires.ftc.vision.VisionPortal;
 
 @Configurable
 @TeleOp(name = "TeleV3", group = "TeleOp")
 public class TeleV3 extends Base_Robot{
-    private final TestCameraStream.Processor processor = new TestCameraStream.Processor();
     @Override
     public void runOpMode() throws InterruptedException {
-        new VisionPortal.Builder().addProcessor(this.processor).setCamera(BuiltinCameraDirection.BACK).build();
-        PanelsCameraStream.INSTANCE.startStream(this.processor, null);
+        // initialize everything ...
         init_motor();
         init_flywheels();
         setFlywheelVelocity(2660);
         init_vision();
         if(USE_WEBCAM)
             setManualExposure();
+
         waitForStart();
-        while (opModeIsActive()){
+        while (opModeIsActive() && !isStopRequested()){
+            // basic functionality
             controlFlywheels();
             manageIntake();
             manage_servos();
-            try {
-                if (gamepad1.right_bumper)
+
+            // look for apriltags without breaking the code. ( makes sure that the apriltag is actually valid before doing anything)
+            lookForAprilTags();
+                if (gamepad1.right_bumper && desiredTag != null) {
                     approachApriltags();
-                else
+                }else {
                     moveRobot();
-            } catch (NullPointerException e){
-                panelsTelemetry.addLine("No apriltag detected");
-                targetFound = false;
-                panelsTelemetry.update(telemetry);
-                moveRobot();
-            }
+                    panelsTelemetry.addLine("You tried but there was no aprilTag");
+                    panelsTelemetry.update(telemetry);
+                }
+
             updateGamepads();
+            // Crucial detecting information about the apriltag..
             panelsTelemetry.addData("desired distance away from target ", DESIRED_DISTANCE);
-            try {
-                panelsTelemetry.addData("Our distance to the apriltag ", desiredTag.ftcPose.range);
-            } catch (NullPointerException e){
-                panelsTelemetry.addData("Our distance to the apriltag", "No apriltag detected");
+            panelsTelemetry.addData("target found var: ", targetFound);
+
+            // target found must be true desired tag should be something before we can use the information.
+            if (targetFound && desiredTag!= null) {
+                    panelsTelemetry.addData("Our actual  distance to the apriltag: ", desiredTag.ftcPose.range);
+                } else {
+                    panelsTelemetry.addData("Our distance to the apriltag", "No apriltag detected");
             }
+            // tuning aprilTag information.
             panelsTelemetry.addData("Auto aim forward power supply ", drive);
             panelsTelemetry.update(telemetry);
             telemetry.update();
-        }
-        if (isStopRequested()){
-            PanelsCameraStream.INSTANCE.stopStream();
         }
     }
 }

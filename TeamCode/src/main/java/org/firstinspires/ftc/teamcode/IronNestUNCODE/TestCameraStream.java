@@ -23,9 +23,9 @@ import org.opencv.core.Mat;
         name = "Test Camera Stream",
         group = "Dev"
 )
-public final class TestCameraStream extends OpMode {
+public class TestCameraStream extends OpMode {
     @NotNull
-    private final Processor processor = new Processor();
+    private Processor processor = new Processor();
 
     @Override
     public void init() {
@@ -42,7 +42,7 @@ public final class TestCameraStream extends OpMode {
         PanelsCameraStream.INSTANCE.stopStream();
     }
 
-    public static final class Processor implements VisionProcessor, CameraStreamSource {
+    public static class Processor implements VisionProcessor, CameraStreamSource {
         @NotNull
         private final AtomicReference<Bitmap> lastFrame;
 

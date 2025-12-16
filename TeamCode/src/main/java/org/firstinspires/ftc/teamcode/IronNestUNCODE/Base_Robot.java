@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-
 import com.bylazar.gamepad.GamepadManager;
 import com.bylazar.gamepad.PanelsGamepad;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -13,30 +10,20 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.function.Consumer;
-import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
-import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
-import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.util.control.PIDController;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.opencv.android.Utils;
-import org.opencv.core.Mat;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Configurable
 public abstract class  Base_Robot extends LinearOpMode {
@@ -133,7 +120,7 @@ public abstract class  Base_Robot extends LinearOpMode {
         double currentLeftVelocity = OutL.getVelocity();
         double currentRightVelocity = OutR.getVelocity();
         // Calculate the power adjustment using the PID controllers
-        if (gamepad1.left_trigger>0) {
+        if (gamepad1.right_trigger>0) {
             leftFlywheelPower = leftFlywheelController.performPID(currentLeftVelocity);
             rightFlywheelPower = rightFlywheelController.performPID(currentRightVelocity);
             // Apply the calculated power to the motors
@@ -182,11 +169,13 @@ public abstract class  Base_Robot extends LinearOpMode {
                 visionPortal = new VisionPortal.Builder()
                         .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                         .addProcessor(apriltag)
+                        .enableLiveView(false)
                         .build();
             } else {
                 visionPortal = new VisionPortal.Builder()
                         .setCamera(BuiltinCameraDirection.BACK)
                         .addProcessor(apriltag)
+                        .enableLiveView(false)
                         .build();
             }
     }
@@ -251,19 +240,19 @@ public abstract class  Base_Robot extends LinearOpMode {
         BL.setPower(backLeftPower);
         BR.setPower(backRightPower);
     }
-    public boolean lookForAprilTags(){
+    public void lookForAprilTags(){
         desiredTag = null;
+        targetFound = false;
         List<AprilTagDetection> currentDetections = this.apriltag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
             // Look to see if we have size info on this tag.
             if (detection.metadata != null) {
                 //  Check to see if we want to track towards this tag.
                 if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
-                    // Yes, we want to use this tag.
+                    // Yes, we want to  use this tag.
                     telemetry.addLine("found tag"+detection.id);
                     telemetry.update();
-                    if (detection.id == DESIRED_TAG_ID)
-                        targetFound = true;
+                    targetFound = true;
                     this.desiredTag = detection;
                     break;  // don't look any further.
                 } else {
@@ -275,11 +264,10 @@ public abstract class  Base_Robot extends LinearOpMode {
                 targetFound = false;
             }
         }
-        return targetFound;
     }
     public void approachApriltags(){
-        lookForAprilTags();
-        if (desiredTag != null && gamepad1.right_bumper && targetFound){
+
+        if (desiredTag != null && gamepad1.right_bumper){
 
             // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
             rangeError      = (this.desiredTag.ftcPose.range - DESIRED_DISTANCE);
