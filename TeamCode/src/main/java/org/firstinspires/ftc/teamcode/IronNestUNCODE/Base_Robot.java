@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
+import com.bylazar.camerastream.PanelsCameraStream;
 import com.bylazar.gamepad.GamepadManager;
 import com.bylazar.gamepad.PanelsGamepad;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -28,11 +29,10 @@ import java.util.concurrent.TimeUnit;
 @Configurable
 public abstract class  Base_Robot extends LinearOpMode {
     public static double MAX_AUTO_TURN = 1, MAX_AUTO_STRAFE = 0.5, MAX_AUTO_SPEED = 1;
-    public static double DESIRED_DISTANCE = 48,SPEED_GAIN = 0.5,TURN_GAIN = 0.5;
+    public static double DESIRED_DISTANCE = 48,SPEED_GAIN = 0.03,TURN_GAIN = 0.03;
     public static double flywheelk_P = 0.001,flywheelk_D = 0.0000000000001, flywheelk_i = 0.0001;
     private static double STRAFE_GAIN = 0.015;
     public DcMotorEx FR, FL, BR, BL, OutL, OutR, In;
-    public AprilTagProcessor apriltag;
     public VisionPortal visionPortal;
     final boolean USE_WEBCAM = true;
     public static final int DESIRED_TAG_ID = -1;
@@ -49,7 +49,7 @@ public abstract class  Base_Robot extends LinearOpMode {
     public GamepadManager g2_panels_manager;
     public double rangeError, headingError, yawError;
     public double drive,turn,strafe;
-
+    public AprilTagStreamProcessor apriltagStreamProcessor;
     /*
     TO DO:
     - calibrate the camera using the tutorial found here: https://ftc-docs.firstinspires.org/en/latest/programming_resources/vision/camera_calibration/camera-calibration.html
@@ -151,33 +151,34 @@ public abstract class  Base_Robot extends LinearOpMode {
             liftL.setPosition(0.215);
         }
     }
-    public void init_vision(){
-            // Create the AprilTag processor by using a builder.
-            apriltag = new AprilTagProcessor.Builder().build();
+    public void init_vision() {
+        // Create the AprilTag processor.
+        AprilTagProcessor aprilTagProcessor = new AprilTagProcessor.Builder().build();
 
-            // Adjust Image Decimation to trade-off detection-range for detection-rate.
-            // e.g. Some typical detection data using a Logitech C920 WebCam
-            // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
-            // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
-            // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
-            // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
-            // Note: Decimation can be changed on-the-fly to adapt during a match.
-            apriltag.setDecimation(2);
+        // Adjust Image Decimation.
+        aprilTagProcessor.setDecimation(2);
 
-            // Create the vision portal by using a builder.
-            if (USE_WEBCAM) {
-                visionPortal = new VisionPortal.Builder()
-                        .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                        .addProcessor(apriltag)
-                        .enableLiveView(false)
-                        .build();
-            } else {
-                visionPortal = new VisionPortal.Builder()
-                        .setCamera(BuiltinCameraDirection.BACK)
-                        .addProcessor(apriltag)
-                        .enableLiveView(false)
-                        .build();
-            }
+        // Create your new combined processor
+        apriltagStreamProcessor = new AprilTagStreamProcessor(aprilTagProcessor);
+        // Create the vision portal using the new combined processor.
+        boolean USE_WEBCAM = true;
+        VisionPortal visionPortal;
+        if (USE_WEBCAM) {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                    .addProcessor(apriltagStreamProcessor) // Use the new processor here
+                    .enableLiveView(false)
+                    .build();
+        } else {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(BuiltinCameraDirection.BACK)
+                    .addProcessor(apriltagStreamProcessor) // And here
+                    .enableLiveView(false)
+                    .build();
+        }
+
+        // Start the camera stream to FTC Panels
+        PanelsCameraStream.INSTANCE.startStream(apriltagStreamProcessor, null);
     }
 
     public void  setManualExposure() {
@@ -240,33 +241,8 @@ public abstract class  Base_Robot extends LinearOpMode {
         BL.setPower(backLeftPower);
         BR.setPower(backRightPower);
     }
-    public void lookForAprilTags(){
-        desiredTag = null;
-        targetFound = false;
-        List<AprilTagDetection> currentDetections = this.apriltag.getDetections();
-        for (AprilTagDetection detection : currentDetections) {
-            // Look to see if we have size info on this tag.
-            if (detection.metadata != null) {
-                //  Check to see if we want to track towards this tag.
-                if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
-                    // Yes, we want to  use this tag.
-                    telemetry.addLine("found tag"+detection.id);
-                    telemetry.update();
-                    targetFound = true;
-                    this.desiredTag = detection;
-                    break;  // don't look any further.
-                } else {
-                    // This tag is in the library, but we do not want to track it right now.
-                    targetFound = false;
-                }
-            } else {
-                // This tag is NOT in the library, so we don't have enough information to track to it.
-                targetFound = false;
-            }
-        }
-    }
     public void approachApriltags(){
-
+        lookForAprilTags();
         if (desiredTag != null && gamepad1.right_bumper){
 
             // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
@@ -277,7 +253,37 @@ public abstract class  Base_Robot extends LinearOpMode {
             // Use the speed and turn "gains" to calculate how we want the robot to move.
             drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
             turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-            calculatePower(0,drive,turn);
+            calculatePower(0,-drive,-turn);
+        }
+        else{
+            calculatePower(0,0,0);
+        }
+    }
+    public void lookForAprilTags() {
+        targetFound = false;
+        desiredTag = null;
+        List<AprilTagDetection> currentDetections = this.apriltagStreamProcessor.getDetections();
+        for (AprilTagDetection detection : currentDetections) {
+            // Look to see if you CAN calculate the distance to the AprilTag.
+            if (detection.ftcPose != null) {
+                //  Check to see if we want to track towards this tag.
+                if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
+                    // Yes, we want to use this tag.
+                    telemetry.addLine("found tag" + detection.id);
+                    telemetry.addLine("distance to the tag"+detection.ftcPose.range);
+                    targetFound = true;
+                    desiredTag = detection;
+                    break;  // don't look any further.
+                } else {
+                    // This tag is in the library, but we do not want to track it right now.
+                    targetFound = false;
+                    desiredTag = null;
+                }
+            } else {
+                // This tag is NOT in the library, so we don't have enough information to track to it.
+                targetFound = false;
+                desiredTag = null;
+            }
         }
     }
     public double getTargetFlywheelVelocity() {
@@ -290,6 +296,9 @@ public abstract class  Base_Robot extends LinearOpMode {
     public void updateGamepads() {
         g1_panels_manager.asCombinedFTCGamepad(gamepad1);
         g2_panels_manager.asCombinedFTCGamepad(gamepad2);
+    }
+    public void stopStreaming() {
+        PanelsCameraStream.INSTANCE.stopStream();
     }
 
 }

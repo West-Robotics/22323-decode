@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Bitmap.Config;
 import com.bylazar.camerastream.PanelsCameraStream;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import java.util.concurrent.atomic.AtomicReference;
@@ -23,6 +24,7 @@ import org.opencv.core.Mat;
         name = "Test Camera Stream",
         group = "Dev"
 )
+@Disabled
 public class TestCameraStream extends OpMode {
     @NotNull
     private Processor processor = new Processor();

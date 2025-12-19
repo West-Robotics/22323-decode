@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
+import com.bylazar.camerastream.PanelsCameraStream;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -18,19 +19,22 @@ public class TeleV3 extends Base_Robot{
 
         waitForStart();
         while (opModeIsActive() && !isStopRequested()){
+            targetFound = false;
+            desiredTag = null;
             // basic functionality
             controlFlywheels();
             manageIntake();
             manage_servos();
 
             // look for apriltags without breaking the code. ( makes sure that the apriltag is actually valid before doing anything)
-            lookForAprilTags();
-                if (gamepad1.right_bumper && desiredTag != null) {
+
+                if (gamepad1.right_bumper) {
                     approachApriltags();
-                }else {
+                }else if (gamepad1.right_bumper && desiredTag == null) {
                     moveRobot();
                     panelsTelemetry.addLine("You tried but there was no aprilTag");
-                    panelsTelemetry.update(telemetry);
+                } else {
+                    moveRobot();
                 }
 
             updateGamepads();
@@ -48,6 +52,9 @@ public class TeleV3 extends Base_Robot{
             panelsTelemetry.addData("Auto aim forward power supply ", drive);
             panelsTelemetry.update(telemetry);
             telemetry.update();
+            if(isStopRequested()){
+                stopStreaming();
+            }
         }
     }
 }
