@@ -70,7 +70,7 @@ public abstract class  Base_Robot extends LinearOpMode {
         this.OutL = hardwareMap.get(DcMotorEx.class, "outtakeL");
         this.OutR = hardwareMap.get(DcMotorEx.class, "outtakeR");
 
-        FR.setDirection(DcMotorSimple.Direction.FORWARD);
+        FR.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
         FL.setDirection(DcMotorSimple.Direction.FORWARD);
         BL.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -153,10 +153,11 @@ public abstract class  Base_Robot extends LinearOpMode {
     }
     public void init_vision() {
         // Create the AprilTag processor.
-        AprilTagProcessor aprilTagProcessor = new AprilTagProcessor.Builder().build();
+        AprilTagProcessor aprilTagProcessor = new AprilTagProcessor.Builder()
+                .build();
 
         // Adjust Image Decimation.
-        aprilTagProcessor.setDecimation(2);
+        aprilTagProcessor.setDecimation(3);
 
         // Create your new combined processor
         apriltagStreamProcessor = new AprilTagStreamProcessor(aprilTagProcessor);
