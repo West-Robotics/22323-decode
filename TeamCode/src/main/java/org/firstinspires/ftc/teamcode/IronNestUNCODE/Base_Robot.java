@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
+import android.util.Size;
+
 import com.bylazar.camerastream.PanelsCameraStream;
 import com.bylazar.gamepad.GamepadManager;
 import com.bylazar.gamepad.PanelsGamepad;
@@ -28,8 +30,8 @@ import java.util.concurrent.TimeUnit;
 
 @Configurable
 public abstract class  Base_Robot extends LinearOpMode {
-    public static double MAX_AUTO_TURN = 1, MAX_AUTO_STRAFE = 0.5, MAX_AUTO_SPEED = 1;
-    public static double DESIRED_DISTANCE = 48,SPEED_GAIN = 0.03,TURN_GAIN = 0.03;
+    public static double MAX_AUTO_TURN = 0.6, MAX_AUTO_STRAFE = 0.5, MAX_AUTO_SPEED = 1;
+    public static double DESIRED_DISTANCE = 48,SPEED_GAIN = 0.025,TURN_GAIN = 0.01;
     public static double flywheelk_P = 0.001,flywheelk_D = 0.0000000000001, flywheelk_i = 0.0001;
     private static double STRAFE_GAIN = 0.015;
     public DcMotorEx FR, FL, BR, BL, OutL, OutR, In;
@@ -154,20 +156,22 @@ public abstract class  Base_Robot extends LinearOpMode {
     public void init_vision() {
         // Create the AprilTag processor.
         AprilTagProcessor aprilTagProcessor = new AprilTagProcessor.Builder()
+                .setLensIntrinsics(907.709453137,907.709453137,600.196503219,243.432203571)
                 .build();
-
         // Adjust Image Decimation.
-        aprilTagProcessor.setDecimation(3);
+        aprilTagProcessor.setDecimation(1);
 
         // Create your new combined processor
         apriltagStreamProcessor = new AprilTagStreamProcessor(aprilTagProcessor);
         // Create the vision portal using the new combined processor.
         boolean USE_WEBCAM = true;
         VisionPortal visionPortal;
+        Size resolution = new Size(1280, 720);
         if (USE_WEBCAM) {
             visionPortal = new VisionPortal.Builder()
                     .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                    .addProcessor(apriltagStreamProcessor) // Use the new processor here
+                    .addProcessor(apriltagStreamProcessor)
+                    .setCameraResolution(resolution)// Use the new processor here
                     .enableLiveView(false)
                     .build();
         } else {
