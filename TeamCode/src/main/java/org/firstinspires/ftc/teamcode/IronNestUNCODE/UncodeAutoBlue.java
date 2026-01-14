@@ -15,25 +15,7 @@ public class UncodeAutoBlue extends Base_Robot{
         //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        DcMotorEx FL = hardwareMap.get(DcMotorEx.class, "FrontL");
-        DcMotorEx FR = hardwareMap.get(DcMotorEx.class, "FrontR");
-        DcMotorEx BR = hardwareMap.get(DcMotorEx.class, "BackR");
-        DcMotorEx BL = hardwareMap.get(DcMotorEx.class, "BackL");
-        DcMotorEx OutL = hardwareMap.get(DcMotorEx.class, "outtakeL");
-        DcMotorEx OutR = hardwareMap.get(DcMotorEx.class, "outtakeR");
-        DcMotorEx In = hardwareMap.get(DcMotorEx.class, "intake");
-        Servo liftL = hardwareMap.get(Servo.class, "LiftL");
-        Servo liftR = hardwareMap.get(Servo.class, "LiftR");
-        FR.setDirection(DcMotorSimple.Direction.FORWARD);
-        BR.setDirection(DcMotorSimple.Direction.REVERSE);
-        FL.setDirection(DcMotorSimple.Direction.FORWARD);
-        BL.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        init_motor();
         int iteration  = 0 ;
         boolean Reached_target_position = false;
         telemetry.addData("Status", "Initialized");
@@ -47,11 +29,11 @@ public class UncodeAutoBlue extends Base_Robot{
                 sleep(1850);
                 Reached_target_position = true;
                 FL.setPower(0); FR.setPower(0); BL.setPower(0); BR.setPower(0);
+                timer.reset();
             }else {
                 FL.setPower(0); FR.setPower(0); BL.setPower(0); BR.setPower(0);
-                sleep(1000);
-                if (timer.seconds()<3 && iteration<3){
-                    OutL.setPower(-0.95); OutR.setPower(0.95);
+                sleep(200);
+                if (timer.seconds()<1){;
                     In.setPower(-1);
                     sleep(15);
                     liftL.setPosition(0.01);
@@ -60,7 +42,7 @@ public class UncodeAutoBlue extends Base_Robot{
                 }else {
                     liftL.setPosition(0.22);
                     liftR.setPosition(0.78);
-                    sleep(1000);
+                    sleep(100);
                     timer.reset();
                     iteration += 1;
                     telemetry.addData("Status", "Outtake Complete");
