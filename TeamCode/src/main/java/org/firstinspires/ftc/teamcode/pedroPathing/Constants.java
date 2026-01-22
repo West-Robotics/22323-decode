@@ -15,17 +15,19 @@ public class Constants {
             .mass(8.5);
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
     public static TwoWheelConstants localizerConstants = new TwoWheelConstants()
-            .strafePodX(8.66)
-            .forwardPodY(4)
-            .forwardEncoder_HardwareMapName("deadStrafe")
-            .strafeEncoder_HardwareMapName("deadForward")
+            .strafePodX(-8.66)
+            .forwardPodY(-4)
+            .forwardEncoder_HardwareMapName("deadForward")
+            .strafeEncoder_HardwareMapName("intake")
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(
                     new RevHubOrientationOnRobot(
                             RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
                             RevHubOrientationOnRobot.UsbFacingDirection.UP
                     )
-            );
+            )
+            .forwardTicksToInches(0.0010691117487182642)
+            .strafeTicksToInches(0.0010707274090402423);
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .twoWheelLocalizer(localizerConstants)
@@ -35,12 +37,12 @@ public class Constants {
     }
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
-            .rightFrontMotorName("FR")
-            .rightRearMotorName("BR")
-            .leftRearMotorName("BL")
-            .leftFrontMotorName("FL")
+            .rightFrontMotorName("FrontR")
+            .rightRearMotorName("BackR")
+            .leftRearMotorName("BackL")
+            .leftFrontMotorName("FrontL")
             .leftFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE);
 }
