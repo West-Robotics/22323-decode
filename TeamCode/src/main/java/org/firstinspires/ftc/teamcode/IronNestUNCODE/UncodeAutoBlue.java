@@ -39,7 +39,9 @@ public class UncodeAutoBlue extends Base_Robot{
                     liftL.setPosition(0.01);
                     liftR.setPosition(0.99);
                     telemetry.addData("Status", "Outtake");
+                    OutL.setPower(0.95); OutR.setPower(0.95);
                 }else {
+                    OutL.setPower(0.95); OutR.setPower(0.95);
                     liftL.setPosition(0.22);
                     liftR.setPosition(0.78);
                     sleep(100);
