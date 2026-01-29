@@ -16,9 +16,9 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "blue6Gate", group = "Autonomous")
+@Autonomous(name = "red6Only", group = "Autonomous")
 @Configurable // Panels
-public class blue6Gate extends Base_Robot_Auto {
+public class red6Only extends Base_Robot_Auto {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
     public Follower follower; // Pedro Pathing follower instance
     private int pathState; // Current autonomous path state (state machine)
@@ -33,7 +33,7 @@ public class blue6Gate extends Base_Robot_Auto {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         pathTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(22.4,126.3, Math.toRadians(320)));
+        follower.setStartingPose(new Pose(-22.4,126.3, Math.toRadians(220)));
         follower.setMaxPower(0.75);
         timer = new ElapsedTime();
 
@@ -79,99 +79,70 @@ public class blue6Gate extends Base_Robot_Auto {
             follower.setConstraints(new PathConstraints(0.995, 0.1, 0.75, 0.05, 100, 1, 10, 1));
             Path1 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(22.4, 126.3),
+                                    new Pose(-22.4, 126.3),
 
-                                    new Pose(49, 100)
+                                    new Pose(-49, 100)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(320), Math.toRadians(320))
+                    ).setLinearHeadingInterpolation(Math.toRadians(220), Math.toRadians(220))
                     .build();
 
             Path2 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 100),
+                                    new Pose(-49, 100),
 
-                                    new Pose(49, 88)
+                                    new Pose(-49, 88)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(180))
+                    ).setConstantHeadingInterpolation(Math.toRadians(0))
 
                     .build();
 
             Path3 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 88),
+                                    new Pose(-49, 88),
 
-                                    new Pose(14, 88)
+                                    new Pose(-14, 88)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                     .build();
 
             Path4 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(14, 88),
+                                    new Pose(-14, 88),
 
-                                    new Pose(25.692, 88)
+                                    new Pose(-47.385, 88)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                     .build();
 
-            Path5 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(25.692, 88),
-
-                                    new Pose(25.821, 71.231)
-                            )
-                    ).setConstantHeadingInterpolation(Math.toRadians(90))
-
-                    .build();
-
-            Path6 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(25.821, 71.231),
-
-                                    new Pose(14.205, 71.385)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
-
-                    .build();
-
-            Path7 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(14.205, 71.385),
-
-                                    new Pose(47.385, 71.590)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
-
-                    .build();
 
             Path8 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(47.385, 71.590),
+                                    new Pose(-47.385, 88),
 
-                                    new Pose(47.385, 94)
+                                    new Pose(-47.385, 94)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
+                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                     .build();
             Path9 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(47.385, 94),
+                                    new Pose(-47.385, 94),
 
-                                    new Pose(49, 100)
+                                    new Pose(-49, 100)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(320))
+                    ).setConstantHeadingInterpolation(Math.toRadians(220))
 
                     .build();
 
             Path10 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 100),
+                                    new Pose(-49, 100),
 
-                                    new Pose(49, 120)
+                                    new Pose(-49, 120)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(320))
+                    ).setConstantHeadingInterpolation(Math.toRadians(220))
 
                     .build();
         }
@@ -193,9 +164,9 @@ public class blue6Gate extends Base_Robot_Auto {
             */
 
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                    /* Score Preload */
+                /* Score Preload */
 
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                 if(!follower.isBusy()){
                     follower.breakFollowing();
                     // 1st Launch Here
@@ -205,9 +176,9 @@ public class blue6Gate extends Base_Robot_Auto {
             case 2:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
 
-                    /* Grab Sample */
+                /* Grab Sample */
 
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                 if(!follower.isBusy()){
                     In.setPower(-1);
                     follower.setMaxPower(0.6);
@@ -217,58 +188,26 @@ public class blue6Gate extends Base_Robot_Auto {
                 break;
             case 3:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                    /* Score Sample */
+                /* Score Sample */
 
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    if(!follower.isBusy()){
-                        follower.breakFollowing();
-                        follower.setMaxPower(0.75);
-                        sleep(500);
-                        In.setPower(0.2);
-                        sleep(600);
-                        In.setPower(0);
-                        follower.followPath(paths.Path4);
-                        setPathState(4);
-            }
+
+                /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                if(!follower.isBusy()){
+                    follower.breakFollowing();
+                    follower.setMaxPower(0.75);
+                    sleep(500);
+                    In.setPower(0.2);
+                    sleep(600);
+                    In.setPower(0);
+                    follower.followPath(paths.Path4);
+                    setPathState(4);
+                }
                 break;
             case 4:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
-                    /* Grab Sample */
+                /* Grab Sample */
 
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                if(!follower.isBusy()){
-                    follower.followPath(paths.Path5);
-                    setPathState(5);
-                }
-                break;
-            case 5:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-
-                    /* Score Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                if(!follower.isBusy()){
-                    follower.followPath(paths.Path6);
-                    setPathState(6);
-                }
-                break;
-            case 6:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup3Pose's position */
-                    /* Grab Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                if(!follower.isBusy()){
-                    follower.breakFollowing();
-                    sleep(3000);
-                    follower.followPath(paths.Path7);
-                    setPathState(7);
-                }
-                break;
-            case 7:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup3Pose's position */
-                    /* Grab Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                 if(!follower.isBusy()){
                     follower.followPath(paths.Path8);
                     setPathState(8);
@@ -288,8 +227,8 @@ public class blue6Gate extends Base_Robot_Auto {
                 break;
             case 10:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                    /* Set the state to a Case we won't use or define, so it just stops running an new paths */
-                    setPathState(-1);
+                /* Set the state to a Case we won't use or define, so it just stops running an new paths */
+                setPathState(-1);
                 break;
         }
     }
@@ -316,7 +255,7 @@ public class blue6Gate extends Base_Robot_Auto {
             OutL.setPower(0.95); OutR.setPower(0.95);
             liftL.setPosition(0.22);
             liftR.setPosition(0.78);
-            sleep(100);
+            sleep(150);
             timer.reset();
             iteration += 1;
             telemetry.addData("Status", "Outtake Complete");
@@ -330,7 +269,7 @@ public class blue6Gate extends Base_Robot_Auto {
                 follower.followPath(path);
                 setPathState(nextPath);
             }
-}
+        }
     }
 }
     
