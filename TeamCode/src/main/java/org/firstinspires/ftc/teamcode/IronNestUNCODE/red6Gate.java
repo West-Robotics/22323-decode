@@ -34,7 +34,7 @@ public class red6Gate extends Base_Robot_Auto {
         pathTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(-22.4,126.3, Math.toRadians(220)));
-        follower.setMaxPower(0.75);
+        follower.setMaxPower(0.85);
         timer = new ElapsedTime();
 
         paths = new Paths(follower); // Build paths
@@ -81,14 +81,14 @@ public class red6Gate extends Base_Robot_Auto {
                             new BezierLine(
                                     new Pose(-22.4, 126.3),
 
-                                    new Pose(-49, 100)
+                                    new Pose(-49, 101)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(220), Math.toRadians(220))
                     .build();
 
             Path2 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(-49, 100),
+                                    new Pose(-49, 101),
 
                                     new Pose(-49, 88)
                             )
@@ -120,7 +120,7 @@ public class red6Gate extends Base_Robot_Auto {
                             new BezierLine(
                                     new Pose(-25.692, 88),
 
-                                    new Pose(-25.821, 71.231)
+                                    new Pose(-25.821, 72)
                             )
                     ).setConstantHeadingInterpolation(Math.toRadians(90))
 
@@ -128,9 +128,9 @@ public class red6Gate extends Base_Robot_Auto {
 
             Path6 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(-25.821, 71.231),
+                                    new Pose(-25.821, 72),
 
-                                    new Pose(-14.205, 71.385)
+                                    new Pose(-14.205, 72)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
 
@@ -138,9 +138,9 @@ public class red6Gate extends Base_Robot_Auto {
 
             Path7 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(-14.205, 71.385),
+                                    new Pose(-14.205, 72),
 
-                                    new Pose(-47.385, 71.590)
+                                    new Pose(-47.385, 72)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
 
@@ -148,7 +148,7 @@ public class red6Gate extends Base_Robot_Auto {
 
             Path8 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(-47.385, 71.590),
+                                    new Pose(-47.385, 72),
 
                                     new Pose(-47.385, 94)
                             )
@@ -159,7 +159,7 @@ public class red6Gate extends Base_Robot_Auto {
                             new BezierLine(
                                     new Pose(-47.385, 94),
 
-                                    new Pose(-49, 100)
+                                    new Pose(-49, 101)
                             )
                     ).setConstantHeadingInterpolation(Math.toRadians(220))
 
@@ -167,7 +167,7 @@ public class red6Gate extends Base_Robot_Auto {
 
             Path10 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(-49, 100),
+                                    new Pose(-49, 101),
 
                                     new Pose(-49, 120)
                             )
@@ -210,7 +210,7 @@ public class red6Gate extends Base_Robot_Auto {
                 /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                 if(!follower.isBusy()){
                     In.setPower(-1);
-                    follower.setMaxPower(0.6);
+                    follower.setMaxPower(0.65);
                     follower.followPath(paths.Path3);
                     setPathState(3);
                 }
@@ -223,7 +223,7 @@ public class red6Gate extends Base_Robot_Auto {
                 /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                 if(!follower.isBusy()){
                     follower.breakFollowing();
-                    follower.setMaxPower(0.75);
+                    follower.setMaxPower(0.85);
                     sleep(500);
                     In.setPower(0.2);
                     sleep(600);

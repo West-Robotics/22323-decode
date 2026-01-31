@@ -83,14 +83,14 @@ public class blue9Only extends Base_Robot_Auto {
                             new BezierLine(
                                     new Pose(22.4, 126.3),
 
-                                    new Pose(49, 100)
+                                    new Pose(49, 101)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(320), Math.toRadians(320))
                     .build();
 
             Path2 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 100),
+                                    new Pose(49, 101),
 
                                     new Pose(49, 88)
                             )
@@ -132,7 +132,7 @@ public class blue9Only extends Base_Robot_Auto {
                             new BezierLine(
                                     new Pose(47.385, 94),
 
-                                    new Pose(49, 100)
+                                    new Pose(49, 101)
                             )
                     ).setConstantHeadingInterpolation(Math.toRadians(320))
 
@@ -141,9 +141,9 @@ public class blue9Only extends Base_Robot_Auto {
             //align for second pickup
             Path10 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 100),
+                                    new Pose(49, 101),
 
-                                    new Pose(49, 68)
+                                    new Pose(49, 63.5)
                             )
                     ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -151,9 +151,9 @@ public class blue9Only extends Base_Robot_Auto {
             //picking up second spike
             Path11 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 68),
+                                    new Pose(49, 63.5),
 
-                                    new Pose(10, 68)
+                                    new Pose(10, 63.5)
                             )
                     ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -161,9 +161,9 @@ public class blue9Only extends Base_Robot_Auto {
             //leaving second spike
             Path12 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(10, 68),
+                                    new Pose(10, 63.5),
 
-                                    new Pose(49, 68)
+                                    new Pose(49, 63.5)
                             )
                     ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -171,7 +171,7 @@ public class blue9Only extends Base_Robot_Auto {
             //going to launch position
             Path13 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 68),
+                                    new Pose(49, 63.5),
 
                                     new Pose(47.385, 94)
                             )
@@ -183,7 +183,7 @@ public class blue9Only extends Base_Robot_Auto {
                             new BezierLine(
                                     new Pose(47.385, 94),
 
-                                    new Pose(49, 100)
+                                    new Pose(49, 101)
                             )
                     ).setConstantHeadingInterpolation(Math.toRadians(320))
 
@@ -191,7 +191,7 @@ public class blue9Only extends Base_Robot_Auto {
             //leave
             Path15 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 100),
+                                    new Pose(49, 101),
 
                                     new Pose(49, 120)
                             )

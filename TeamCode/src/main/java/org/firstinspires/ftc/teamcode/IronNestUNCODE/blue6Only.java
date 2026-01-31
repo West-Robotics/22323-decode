@@ -81,14 +81,14 @@ public class blue6Only extends Base_Robot_Auto {
                             new BezierLine(
                                     new Pose(22.4, 126.3),
 
-                                    new Pose(49, 100)
+                                    new Pose(49, 101)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(320), Math.toRadians(320))
                     .build();
 
             Path2 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 100),
+                                    new Pose(49, 101),
 
                                     new Pose(49, 88)
                             )
@@ -122,14 +122,14 @@ public class blue6Only extends Base_Robot_Auto {
 
                                     new Pose(47.385, 94)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
                     .build();
             Path9 = follower.pathBuilder().addPath(
                             new BezierLine(
                                     new Pose(47.385, 94),
 
-                                    new Pose(49, 100)
+                                    new Pose(49, 101)
                             )
                     ).setConstantHeadingInterpolation(Math.toRadians(320))
 
@@ -137,7 +137,7 @@ public class blue6Only extends Base_Robot_Auto {
 
             Path10 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 100),
+                                    new Pose(49, 101),
 
                                     new Pose(49, 130)
                             )
