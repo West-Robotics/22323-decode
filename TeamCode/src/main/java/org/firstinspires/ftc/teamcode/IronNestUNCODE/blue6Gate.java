@@ -25,7 +25,9 @@ public class blue6Gate extends Base_Robot_Auto {
     private Paths paths; // Paths defined in the Paths class
     private Timer pathTimer, actionTimer, opmodeTimer; // Timer for autonomous paths
     private ElapsedTime timer;
+    private ElapsedTime gateHoldTimer;
     boolean timerUsed = false;
+    boolean gateHoldTimerUsed = false;
     private int iteration = 0;
 
     @Override
@@ -36,6 +38,7 @@ public class blue6Gate extends Base_Robot_Auto {
         follower.setStartingPose(new Pose(22.4,126.3, Math.toRadians(320)));
         follower.setMaxPower(0.85);
         timer = new ElapsedTime();
+        gateHoldTimer = new ElapsedTime();
 
         paths = new Paths(follower); // Build paths
 
@@ -81,14 +84,14 @@ public class blue6Gate extends Base_Robot_Auto {
                             new BezierLine(
                                     new Pose(22.4, 126.3),
 
-                                    new Pose(49, 101)
+                                    new Pose(49, 100)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(320), Math.toRadians(320))
                     .build();
 
             Path2 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 101),
+                                    new Pose(49, 100),
 
                                     new Pose(49, 88)
                             )
@@ -110,7 +113,7 @@ public class blue6Gate extends Base_Robot_Auto {
                             new BezierLine(
                                     new Pose(14, 88),
 
-                                    new Pose(25.692, 88)
+                                    new Pose(26, 88)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
@@ -118,48 +121,54 @@ public class blue6Gate extends Base_Robot_Auto {
 
             Path5 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(25.692, 88),
+                                    new Pose(26, 88),
 
-                                    new Pose(25.821, 72)
+                                    new Pose(26, 76)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(90))
+                    ).setConstantHeadingInterpolation(Math.toRadians(0))
 
                     .build();
 
             Path6 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(25.821, 72),
+                                    new Pose(26, 76),
 
-                                    new Pose(14.205, 72)
+                                    new Pose(15, 76)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
+                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                     .build();
 
             Path7 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(14.205, 72),
+                                    new Pose(15, 76),
 
-                                    new Pose(47.385, 72)
+                                    new Pose(26, 76)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
+                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                     .build();
 
             Path8 = follower.pathBuilder().addPath(
+
+                    //PATH 8 IS NOT USED
+
                             new BezierLine(
-                                    new Pose(47.385, 72),
+                                    new Pose(47.385, 76),
 
                                     new Pose(47.385, 94)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
+                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                     .build();
             Path9 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(47.385, 94),
 
-                                    new Pose(49, 101)
+                                    //MADE TO COME FROM PATH 7
+
+                                    new Pose(26, 76),
+
+                                    new Pose(49, 100)
                             )
                     ).setConstantHeadingInterpolation(Math.toRadians(320))
 
@@ -167,7 +176,7 @@ public class blue6Gate extends Base_Robot_Auto {
 
             Path10 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 101),
+                                    new Pose(49, 100),
 
                                     new Pose(49, 120)
                             )
@@ -197,7 +206,7 @@ public class blue6Gate extends Base_Robot_Auto {
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                 if(!follower.isBusy()){
-                    follower.breakFollowing();
+                    //follower.breakFollowing();
                     // 1st Launch Here
                     launch(paths.Path2,2);
                 }
@@ -222,11 +231,14 @@ public class blue6Gate extends Base_Robot_Auto {
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     if(!follower.isBusy()){
                         follower.breakFollowing();
+                        //Yes, it can get faster
                         follower.setMaxPower(0.85);
                         sleep(500);
                         In.setPower(0.2);
                         sleep(600);
                         In.setPower(0);
+                        //The custom waiting to sync w/ Avery
+                        sleep(0);
                         follower.followPath(paths.Path4);
                         setPathState(4);
             }
@@ -253,36 +265,51 @@ public class blue6Gate extends Base_Robot_Auto {
                 }
                 break;
             case 6:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup3Pose's position */
-                    /* Grab Sample */
+                //if it can't get to the gate, just give up and go launch
+                if (!timerUsed){
+                    timer.reset();
+                    timerUsed = true;
+                }
+                if (timer.seconds()>3){
+                    follower.followPath(paths.Path7);
+                    setPathState(7);
+                    timerUsed = false;
+                }
 
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                 if(!follower.isBusy()){
-                    follower.breakFollowing();
-                    sleep(3000);
+                    //follower.breakFollowing();
+                    //shorter wait here for sync
+                    if (!gateHoldTimerUsed){
+                        gateHoldTimer.reset();
+                        gateHoldTimerUsed = true;
+                    }
+
+                }
+                if(gateHoldTimerUsed && gateHoldTimer.seconds() > 3){
+                    timerUsed = false;
+                    gateHoldTimerUsed = false;
                     follower.followPath(paths.Path7);
                     setPathState(7);
                 }
                 break;
             case 7:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup3Pose's position */
-                    /* Grab Sample */
 
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                if(!follower.isBusy()){
-                    follower.followPath(paths.Path8);
-                    setPathState(8);
-                }
-                break;
-            case 8:
+                //
+
                 if(!follower.isBusy()){
                     follower.followPath(paths.Path9);
                     setPathState(9);
                 }
                 break;
+            /* case 8:
+                if(!follower.isBusy()){
+                    follower.followPath(paths.Path9);
+                    setPathState(9);
+                }
+                break; */
             case 9:
                 if(!follower.isBusy()){
-                    follower.breakFollowing();
+                    //follower.breakFollowing();
                     launch(paths.Path10,10);
                 }
                 break;
@@ -306,7 +333,7 @@ public class blue6Gate extends Base_Robot_Auto {
             timerUsed = true;
         }
         sleep(200);
-        if (timer.seconds()<1){;
+        if (timer.seconds()<1){
             sleep(15);
             liftL.setPosition(0.01);
             liftR.setPosition(0.99);
