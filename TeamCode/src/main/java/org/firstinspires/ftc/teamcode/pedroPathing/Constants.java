@@ -6,6 +6,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
 import com.pedropathing.ftc.drivetrains.MecanumConstants;
+import com.pedropathing.ftc.localization.Encoder;
 import com.pedropathing.ftc.localization.constants.TwoWheelConstants;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -23,8 +24,10 @@ public class Constants {
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.95, 0.6);
     public static TwoWheelConstants localizerConstants = new TwoWheelConstants()
+            .forwardEncoderDirection(Encoder.FORWARD)
+            .strafeEncoderDirection(Encoder.REVERSE)
             .strafePodX(-8.66)
-            .forwardPodY(-4)
+            .forwardPodY(-4.15)
             .forwardEncoder_HardwareMapName("deadForward")
             .strafeEncoder_HardwareMapName("intake")
             .IMU_HardwareMapName("imu")

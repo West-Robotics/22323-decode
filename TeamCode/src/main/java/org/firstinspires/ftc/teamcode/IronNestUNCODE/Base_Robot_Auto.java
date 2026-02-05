@@ -7,6 +7,9 @@ import com.bylazar.gamepad.GamepadManager;
 import com.bylazar.gamepad.PanelsGamepad;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.paths.PathChain;
+import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,6 +27,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.List;
@@ -31,6 +35,9 @@ import java.util.concurrent.TimeUnit;
 
 @Configurable
 public abstract class  Base_Robot_Auto extends OpMode {
+    public Follower follower; boolean timerUsed = false; private int iteration = 0;
+    public int pathState;    public Timer pathTimer, actionTimer, opmodeTimer; // Timer for autonomous paths
+    public ElapsedTime timer;
     public static double MAX_AUTO_TURN = 0.6, MAX_AUTO_STRAFE = 0.5, MAX_AUTO_SPEED = 1;
     public static double DESIRED_DISTANCE = 48,SPEED_GAIN = 0.025,TURN_GAIN = 0.01;
     public static double flywheelk_P = 0.001,flywheelk_D = 0.0000000000001, flywheelk_i = 0.0001;
@@ -61,7 +68,42 @@ public abstract class  Base_Robot_Auto extends OpMode {
       - graph the variables in ftc panels and get a sense of what is happening and why the auto aim keeps going straight into the apriltag even after reaching desired distance
 
      */
+    public void setPathState(int pState) {
+        pathState = pState;
+    }
 
+    public void launch(PathChain path, int nextPath){
+        if (!timerUsed){
+            timer.reset();
+            iteration = 0;
+            timerUsed = true;
+        }
+        if (timer.seconds()<0.4){;
+            liftL.setPosition(0.01);
+            liftR.setPosition(0.99);
+            telemetry.addData("Status", "Outtake");
+            OutL.setPower(0.95); OutR.setPower(0.95);
+        }else if (timer.seconds()>0.9) {
+            timer.reset();
+            iteration += 1;
+            telemetry.addData("Status", "Outtake Complete");
+            if(iteration == 1) {
+                In.setPower(-1);
+            }
+            if(iteration == 3) {
+                OutL.setPower(0); OutR.setPower(0);
+                In.setPower(0);
+                timerUsed = false;
+                follower.followPath(path);
+                setPathState(nextPath);
+            }
+
+        } else {
+            OutL.setPower(0.95); OutR.setPower(0.95);
+            liftL.setPosition(0.22);
+            liftR.setPosition(0.78);
+        }
+    }
     public void init_motor(){
         this.FL = hardwareMap.get(DcMotorEx.class, "FrontL");
         this.FR = hardwareMap.get(DcMotorEx.class, "FrontR");

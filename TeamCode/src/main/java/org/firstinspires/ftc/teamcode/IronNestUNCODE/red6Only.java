@@ -20,13 +20,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Configurable // Panels
 public class red6Only extends Base_Robot_Auto {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
-    public Follower follower; // Pedro Pathing follower instance
-    private int pathState; // Current autonomous path state (state machine)
     private Paths paths; // Paths defined in the Paths class
-    private Timer pathTimer, actionTimer, opmodeTimer; // Timer for autonomous paths
-    private ElapsedTime timer;
-    boolean timerUsed = false;
-    private int iteration = 0;
 
     @Override
     public void init() {
@@ -230,45 +224,6 @@ public class red6Only extends Base_Robot_Auto {
                 /* Set the state to a Case we won't use or define, so it just stops running an new paths */
                 setPathState(-1);
                 break;
-        }
-    }
-
-    /** These change the states of the paths and actions. It will also reset the timers of the individual switches **/
-    public void setPathState(int pState) {
-        pathState = pState;
-    }
-
-    public void launch(PathChain path, int nextPath) throws InterruptedException{
-        if (!timerUsed){
-            timer.reset();
-            iteration = 0;
-            timerUsed = true;
-        }
-        sleep(200);
-        if (timer.seconds()<1){;
-            sleep(15);
-            liftL.setPosition(0.01);
-            liftR.setPosition(0.99);
-            telemetry.addData("Status", "Outtake");
-            OutL.setPower(0.95); OutR.setPower(0.95);
-        }else {
-            OutL.setPower(0.95); OutR.setPower(0.95);
-            liftL.setPosition(0.22);
-            liftR.setPosition(0.78);
-            sleep(150);
-            timer.reset();
-            iteration += 1;
-            telemetry.addData("Status", "Outtake Complete");
-            if(iteration == 1) {
-                In.setPower(-1);
-            }
-            if(iteration == 3) {
-                OutL.setPower(0); OutR.setPower(0);
-                In.setPower(0);
-                timerUsed = false;
-                follower.followPath(path);
-                setPathState(nextPath);
-            }
         }
     }
 }
