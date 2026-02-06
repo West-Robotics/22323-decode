@@ -82,7 +82,7 @@ public abstract class  Base_Robot_Auto extends OpMode {
             liftL.setPosition(0.01);
             liftR.setPosition(0.99);
             telemetry.addData("Status", "Outtake");
-            controlFlywheels();
+            OutL.setPower(0.95); OutR.setPower(0.95);
         }else if (timer.seconds()>0.9) {
             timer.reset();
             iteration += 1;
@@ -99,7 +99,6 @@ public abstract class  Base_Robot_Auto extends OpMode {
             }
 
         } else {
-            controlFlywheels();
             liftL.setPosition(0.22);
             liftR.setPosition(0.78);
         }
