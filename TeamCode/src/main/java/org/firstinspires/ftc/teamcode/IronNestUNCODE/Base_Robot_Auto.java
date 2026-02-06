@@ -82,7 +82,7 @@ public abstract class  Base_Robot_Auto extends OpMode {
             liftL.setPosition(0.01);
             liftR.setPosition(0.99);
             telemetry.addData("Status", "Outtake");
-            OutL.setPower(0.95); OutR.setPower(0.95);
+            controlFlywheels();
         }else if (timer.seconds()>0.9) {
             timer.reset();
             iteration += 1;
@@ -99,7 +99,7 @@ public abstract class  Base_Robot_Auto extends OpMode {
             }
 
         } else {
-            OutL.setPower(0.95); OutR.setPower(0.95);
+            controlFlywheels();
             liftL.setPosition(0.22);
             liftR.setPosition(0.78);
         }
@@ -165,18 +165,11 @@ public abstract class  Base_Robot_Auto extends OpMode {
         double currentLeftVelocity = OutL.getVelocity();
         double currentRightVelocity = OutR.getVelocity();
         // Calculate the power adjustment using the PID controllers
-        if (gamepad1.right_trigger>0) {
             leftFlywheelPower = leftFlywheelController.performPID(currentLeftVelocity);
             rightFlywheelPower = rightFlywheelController.performPID(currentRightVelocity);
             // Apply the calculated power to the motors
             OutL.setPower(leftFlywheelPower);
             OutR.setPower(rightFlywheelPower);
-        }
-        else {
-            OutL.setPower(0);
-            OutR.setPower(0);
-        }
-
     }
     public void manageIntake(){
         if(gamepad1.left_trigger>.2||gamepad2.left_trigger>.2){

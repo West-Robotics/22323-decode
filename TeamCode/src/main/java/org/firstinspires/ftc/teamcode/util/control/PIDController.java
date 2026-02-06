@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.util.control;
 
 // PID controller courtesy of Peter Tischler, with modifications.
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 public class PIDController
 {
     private double m_P;                     // factor for "proportional" control
@@ -208,9 +210,9 @@ public class PIDController
         if (m_maximumInput > m_minimumInput)
         {
             if (setpoint < 0) sign = -1;
-
-            if (Math.abs(setpoint) > m_maximumInput)
+            if (Math.abs(setpoint) > m_maximumInput){
                 m_setpoint = m_maximumInput * sign;
+                telemetry.addData("The setpoint: ", m_setpoint); }
             else if (Math.abs(setpoint) < m_minimumInput)
                 m_setpoint = m_minimumInput * sign;
             else

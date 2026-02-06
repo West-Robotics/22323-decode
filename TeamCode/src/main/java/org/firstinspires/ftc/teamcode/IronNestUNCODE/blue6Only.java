@@ -23,6 +23,8 @@ public class blue6Only extends Base_Robot_Auto {
     private Paths paths; // Paths defined in the Paths class
     @Override
     public void init() {
+        init_flywheels();
+        setTargetFlywheelVelocity(2600);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         pathTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);

@@ -40,7 +40,7 @@ public abstract class  Base_Robot extends LinearOpMode {
     public static final int DESIRED_TAG_ID = -1;
     public AprilTagDetection desiredTag;
     public Servo liftL, liftR;
-    private PIDController leftFlywheelController;
+    protected PIDController leftFlywheelController;
     private PIDController rightFlywheelController;
     private double targetFlywheelVelocity = 0;
     public double leftFlywheelPower = 0;

@@ -41,6 +41,7 @@ public class TeleV3 extends Base_Robot{
             // Crucial detecting information about the apriltag..
             panelsTelemetry.addData("desired distance away from target ", DESIRED_DISTANCE);
             panelsTelemetry.addData("target found var: ", targetFound);
+            panelsTelemetry.addData("Our setpoint; ", leftFlywheelController.getSetpoint());
 
             // target found must be true desired tag should be something before we can use the information.
             if (targetFound && desiredTag!= null) {
