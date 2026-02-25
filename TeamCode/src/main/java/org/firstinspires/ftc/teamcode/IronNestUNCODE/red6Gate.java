@@ -79,16 +79,16 @@ public class red6Gate extends Base_Robot_Auto {
                             new BezierLine(
                                     new Pose(-22.4, 126.3),
 
-                                    new Pose(-49, 100)
+                                    new Pose(-44.5, 98)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(220), Math.toRadians(220))
                     .build();
 
             Path2 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(-49, 100),
+                                    new Pose(-44.5, 98),
 
-                                    new Pose(-49, 88)
+                                    new Pose(-46, 88)
                             )
                     ).setConstantHeadingInterpolation(Math.toRadians(0))
 
@@ -96,7 +96,7 @@ public class red6Gate extends Base_Robot_Auto {
 
             Path3 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(-49, 88),
+                                    new Pose(-46, 88),
 
                                     new Pose(-14, 88)
                             )
@@ -163,7 +163,7 @@ public class red6Gate extends Base_Robot_Auto {
 
                                     new Pose(-26, 74),
 
-                                    new Pose(-49, 100)
+                                    new Pose(-44.5, 98)
                             )
                     ).setConstantHeadingInterpolation(Math.toRadians(220))
 
@@ -171,7 +171,7 @@ public class red6Gate extends Base_Robot_Auto {
 
             Path10 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(-49, 100),
+                                    new Pose(-44.5, 98),
 
                                     new Pose(-49, 120)
                             )
@@ -203,7 +203,7 @@ public class red6Gate extends Base_Robot_Auto {
                 if(!follower.isBusy()){
                     //follower.breakFollowing();
                     // 1st Launch Here
-                    launch(paths.Path2,2);
+                    launch(paths.Path2,2,0.925);
                 }
                 break;
             case 2:
@@ -305,7 +305,7 @@ public class red6Gate extends Base_Robot_Auto {
             case 9:
                 if(!follower.isBusy()){
                     //follower.breakFollowing();
-                    launch(paths.Path10,10);
+                    launch(paths.Path10,10,0.925);
                 }
                 break;
             case 10:

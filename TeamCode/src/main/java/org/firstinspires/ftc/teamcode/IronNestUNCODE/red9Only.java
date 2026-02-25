@@ -217,7 +217,7 @@ public class red9Only extends Base_Robot_Auto {
                 if(!follower.isBusy()){
                     follower.breakFollowing();
                     // 1st Launch Here
-                    launch(paths.Path2,2);
+                    launch(paths.Path2,2,0.93);
                 }
                 break;
             case 2:
@@ -269,7 +269,7 @@ public class red9Only extends Base_Robot_Auto {
             case 9:
                 if(!follower.isBusy()){
                     follower.breakFollowing();
-                    launch(paths.Path10,10);
+                    launch(paths.Path10,10,0.93);
                 }
                 break;
             case 10:

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
+import android.health.connect.datatypes.units.Power;
 import android.util.Size;
 
 import com.bylazar.camerastream.PanelsCameraStream;
@@ -83,7 +84,38 @@ public abstract class  Base_Robot_Auto extends OpMode {
             liftR.setPosition(0.99);
             telemetry.addData("Status", "Outtake");
             OutL.setPower(0.95); OutR.setPower(0.95);
-        }else if (timer.seconds()>0.9) {
+        }else if (timer.seconds()>0.96) {
+            timer.reset();
+            iteration += 1;
+            telemetry.addData("Status", "Outtake Complete");
+            if(iteration == 1) {
+                In.setPower(-1);
+            }
+            if(iteration == 3) {
+                OutL.setPower(0); OutR.setPower(0);
+                In.setPower(0);
+                timerUsed = false;
+                follower.followPath(path);
+                setPathState(nextPath);
+            }
+
+        } else {
+            liftL.setPosition(0.22);
+            liftR.setPosition(0.78);
+        }
+    }
+    public void launch(PathChain path, int nextPath,double power){
+        if (!timerUsed){
+            timer.reset();
+            iteration = 0;
+            timerUsed = true;
+        }
+        if (timer.seconds()<0.4){;
+            liftL.setPosition(0.01);
+            liftR.setPosition(0.99);
+            telemetry.addData("Status", "Outtake");
+            OutL.setPower(power); OutR.setPower(power);
+        }else if (timer.seconds()>0.96) {
             timer.reset();
             iteration += 1;
             telemetry.addData("Status", "Outtake Complete");

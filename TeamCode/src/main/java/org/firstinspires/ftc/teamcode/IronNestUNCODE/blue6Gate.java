@@ -24,6 +24,7 @@ public class blue6Gate extends Base_Robot_Auto {
     private ElapsedTime gateHoldTimer;
     boolean gateHoldTimerUsed = false;
 
+
     @Override
     public void init() {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -78,14 +79,14 @@ public class blue6Gate extends Base_Robot_Auto {
                             new BezierLine(
                                     new Pose(22.4, 126.3),
 
-                                    new Pose(49, 100)
+                                    new Pose(44.5, 98)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(320), Math.toRadians(320))
                     .build();
 
             Path2 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 100),
+                                    new Pose(44.5, 98),
 
                                     new Pose(49, 88)
                             )
@@ -162,7 +163,7 @@ public class blue6Gate extends Base_Robot_Auto {
 
                                     new Pose(26, 74),
 
-                                    new Pose(49, 100)
+                                    new Pose(44.5, 98)
                             )
                     ).setConstantHeadingInterpolation(Math.toRadians(320))
 
@@ -170,7 +171,7 @@ public class blue6Gate extends Base_Robot_Auto {
 
             Path10 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 100),
+                                    new Pose(44.5, 98),
 
                                     new Pose(49, 120)
                             )
@@ -202,7 +203,7 @@ public class blue6Gate extends Base_Robot_Auto {
                 if(!follower.isBusy()){
                     //follower.breakFollowing();
                     // 1st Launch Here
-                    launch(paths.Path2,2);
+                    launch(paths.Path2,2,0.925);
                 }
                 break;
             case 2:
@@ -304,7 +305,7 @@ public class blue6Gate extends Base_Robot_Auto {
             case 9:
                 if(!follower.isBusy()){
                     //follower.breakFollowing();
-                    launch(paths.Path10,10);
+                    launch(paths.Path10,10,0.925);
                 }
                 break;
             case 10:
