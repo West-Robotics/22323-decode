@@ -1,15 +1,13 @@
-
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 import static java.lang.Thread.sleep;
 
 import com.pedropathing.paths.PathConstraints;
 import com.pedropathing.util.Timer;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.TelemetryManager;
 import com.bylazar.telemetry.PanelsTelemetry;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
@@ -310,7 +308,7 @@ public class blue6Gate extends Base_Robot_Auto {
                 break;
             case 10:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                    /* Set the state to a Case we won't use or define, so it just stops running an new paths */
+                    /* Set the state to a Case we won't use or define, so it just stops running n new paths */
                     setPathState(-1);
                 break;
         }

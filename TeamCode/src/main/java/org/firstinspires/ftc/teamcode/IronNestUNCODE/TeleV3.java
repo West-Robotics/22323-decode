@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class TeleV3 extends Base_Robot{
     @Override
     public void runOpMode() throws InterruptedException {
+
         // initialize everything ...
         init_motor();
         init_flywheels();
@@ -16,18 +17,18 @@ public class TeleV3 extends Base_Robot{
         init_vision();
         if(USE_WEBCAM)
             setManualExposure();
-
         waitForStart();
+        // Robot on loop
         while (opModeIsActive() && !isStopRequested()){
             targetFound = false;
             desiredTag = null;
+
             // basic functionality
             controlFlywheels();
             manageIntake();
             manage_servos();
 
             // look for apriltags without breaking the code. ( makes sure that the apriltag is actually valid before doing anything)
-
                 if (gamepad1.right_bumper) {
                     approachApriltags();
                 }else if (gamepad1.right_bumper && desiredTag == null) {

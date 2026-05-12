@@ -7,6 +7,7 @@ import com.bylazar.gamepad.GamepadManager;
 import com.bylazar.gamepad.PanelsGamepad;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -23,6 +24,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.List;
@@ -34,7 +36,7 @@ public abstract class  Base_Robot extends LinearOpMode {
     public static double DESIRED_DISTANCE = 48,SPEED_GAIN = 0.025,TURN_GAIN = 0.01;
     public static double flywheelk_P = 0.001,flywheelk_D = 0.0000000000001, flywheelk_i = 0.0001;
     private static double STRAFE_GAIN = 0.015;
-    public DcMotorEx FR, FL, BR, BL, OutL, OutR, In;
+    public DcMotorEx FR, FL, BR, BL, OutL, OutR, In,Boost;
     public VisionPortal visionPortal;
     final boolean USE_WEBCAM = true;
     public static final int DESIRED_TAG_ID = -1;
@@ -57,7 +59,7 @@ public abstract class  Base_Robot extends LinearOpMode {
     - calibrate the camera using the tutorial found here: https://ftc-docs.firstinspires.org/en/latest/programming_resources/vision/camera_calibration/camera-calibration.html
     - test and run teleop. make sure nothing is inverted and basic functionality works
     - test auto aim:
-      - graph the variables in ftc panels and get a sense of what is happening and why the auto aim keeps going straight into the apriltag even after reaching desired distance
+    - graph the variables in ftc panels and get a sense of what is happening and why the auto aim keeps going straight into the apriltag even after reaching desired distance
 
      */
 
@@ -69,13 +71,15 @@ public abstract class  Base_Robot extends LinearOpMode {
         this.liftL = hardwareMap.get(Servo.class, "LiftL");
         this.liftR = hardwareMap.get(Servo.class, "LiftR");
         this.In = hardwareMap.get(DcMotorEx.class, "intake");
+        this.Boost = hardwareMap.get(DcMotorEx.class,"booster");
         this.OutL = hardwareMap.get(DcMotorEx.class, "outtakeL");
         this.OutR = hardwareMap.get(DcMotorEx.class, "outtakeR");
 
-        FR.setDirection(DcMotorSimple.Direction.REVERSE);
-        BR.setDirection(DcMotorSimple.Direction.REVERSE);
-        FL.setDirection(DcMotorSimple.Direction.FORWARD);
-        BL.setDirection(DcMotorSimple.Direction.FORWARD);
+        FR.setDirection(DcMotorSimple.Direction.FORWARD);
+        BR.setDirection(DcMotorSimple.Direction.FORWARD);
+        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+        BL.setDirection(DcMotorSimple.Direction.REVERSE);
+        Boost.setDirection(DcMotorSimple.Direction.REVERSE);
         OutL.setDirection(DcMotorSimple.Direction.REVERSE);
 
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -138,16 +142,26 @@ public abstract class  Base_Robot extends LinearOpMode {
     public void manageIntake(){
         if(gamepad1.left_trigger>.2||gamepad2.left_trigger>.2){
             In.setPower(-1);
+            Boost.setPower(-1);
         }else if(gamepad1.left_bumper||gamepad2.left_bumper){
             In.setPower(0.25);
+            Boost.setPower(0.25);
         }else{
             In.setPower(0);
+            Boost.setPower(0);
         }
+    }
+    public void manageIntake(boolean using){
+       boolean flag = false;
+       Timer timer = new Timer();
+       if(gamepad1.a && !flag){
+           
+       }
     }
     public void manage_servos(){
         if(gamepad1.a){
-            liftL.setPosition(0.01);
-            liftR.setPosition(0.99);
+            liftL.setPosition(0.001);
+            liftR.setPosition(0.999);
         }else {
             liftR.setPosition(0.785);
             liftL.setPosition(0.215);

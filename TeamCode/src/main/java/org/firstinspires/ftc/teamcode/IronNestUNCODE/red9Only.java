@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.TelemetryManager;
 import com.bylazar.telemetry.PanelsTelemetry;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
