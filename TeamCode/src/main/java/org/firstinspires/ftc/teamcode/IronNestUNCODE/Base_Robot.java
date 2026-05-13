@@ -7,7 +7,6 @@ import com.bylazar.gamepad.GamepadManager;
 import com.bylazar.gamepad.PanelsGamepad;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
-import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -28,10 +27,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.List;
+import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 @Configurable
 public abstract class  Base_Robot extends LinearOpMode {
+
+    public  static boolean flag = false;
+    static int iteration=0;
+    public  static com.pedropathing.util.Timer servoTimer = new com.pedropathing.util.Timer();
     public static double MAX_AUTO_TURN = 0.6, MAX_AUTO_STRAFE = 0.5, MAX_AUTO_SPEED = 1;
     public static double DESIRED_DISTANCE = 48,SPEED_GAIN = 0.025,TURN_GAIN = 0.01;
     public static double flywheelk_P = 0.001,flywheelk_D = 0.0000000000001, flywheelk_i = 0.0001;
@@ -151,20 +155,39 @@ public abstract class  Base_Robot extends LinearOpMode {
             Boost.setPower(0);
         }
     }
-    public void manageIntake(boolean using){
-       boolean flag = false;
-       Timer timer = new Timer();
-       if(gamepad1.a && !flag){
-           
-       }
-    }
     public void manage_servos(){
-        if(gamepad1.a){
+        if(gamepad1.y){
             liftL.setPosition(0.001);
             liftR.setPosition(0.999);
-        }else {
+            flag = false;
+        }if(gamepad1.x) {
             liftR.setPosition(0.785);
             liftL.setPosition(0.215);
+            flag = false;
+        }
+        if(gamepad1.a && !flag){
+            flag = true;
+            servoTimer.resetTimer();
+            iteration=0;
+        }
+        if(flag){
+            if(servoTimer.getElapsedTimeSeconds() >= 0.4){
+                iteration = 1;
+            }
+            if(servoTimer.getElapsedTimeSeconds() >= 0.8){
+                iteration = 2;
+            }
+           if(servoTimer.getElapsedTimeSeconds() >= 0.8){
+                flag = false;
+            }
+            if(iteration == 0){
+            liftL.setPosition(0.001);
+            liftR.setPosition(0.999);
+            }
+            if(iteration == 1){
+            liftR.setPosition(0.785);
+            liftL.setPosition(0.215);
+            }
         }
     }
     public void init_vision() {
