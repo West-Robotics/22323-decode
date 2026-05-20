@@ -1,5 +1,5 @@
 // Make sure to update IronnestOneDriver whenever you update this.
-package org.firstinspires.ftc.teamcode.IronNest;
+package org.firstinspires.ftc.teamcode.ironnest;
 
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 @TeleOp(name = "Ironnest")
+@Disabled
 public class IronnestTeleop extends OpMode {
 
     private double wristpos;

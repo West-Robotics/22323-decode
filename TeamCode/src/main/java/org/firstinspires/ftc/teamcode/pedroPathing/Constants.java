@@ -24,16 +24,16 @@ public class Constants {
             .lateralZeroPowerAcceleration(-70.22445936114721)
             .translationalPIDFCoefficients(new PIDFCoefficients(0.1,0, 0.01, 0.025))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.025,0.0,0.0001,0.6,0.01))
-            .mass(8.5);
+            .mass(11);
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.95, 0.6);
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .strafePodX(1.5882779819758852)
-            .forwardPodY(7.989159771776574)
+            .strafePodX(7.926408902866633)
+            .forwardPodY(-3.6147432101993076)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
 

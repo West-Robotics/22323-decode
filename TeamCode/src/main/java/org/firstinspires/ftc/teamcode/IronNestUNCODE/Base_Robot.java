@@ -42,6 +42,10 @@ public abstract class  Base_Robot extends LinearOpMode {
     private static double STRAFE_GAIN = 0.015;
     public DcMotorEx FR, FL, BR, BL, OutL, OutR, In,Boost;
     public VisionPortal visionPortal;
+
+    public static double servoUpPosition = 0.01;
+
+    public static double servoDownPosition = 0.265;
     final boolean USE_WEBCAM = true;
     public static final int DESIRED_TAG_ID = -1;
     public AprilTagDetection desiredTag;
@@ -157,12 +161,12 @@ public abstract class  Base_Robot extends LinearOpMode {
     }
     public void manage_servos(){
         if(gamepad1.y){
-            liftL.setPosition(0.001);
-            liftR.setPosition(0.999);
+            liftL.setPosition(servoUpPosition);
+            liftR.setPosition(0.995 - servoUpPosition);
             flag = false;
         }if(gamepad1.x) {
-            liftR.setPosition(0.785);
-            liftL.setPosition(0.215);
+            liftR.setPosition(0.995 - servoDownPosition);
+            liftL.setPosition(servoDownPosition);
             flag = false;
         }
         if(gamepad1.a && !flag){
@@ -181,12 +185,12 @@ public abstract class  Base_Robot extends LinearOpMode {
                 flag = false;
             }
             if(iteration == 0){
-            liftL.setPosition(0.001);
-            liftR.setPosition(0.999);
+            liftL.setPosition(servoUpPosition);
+            liftR.setPosition(0.995 - servoUpPosition);
             }
             if(iteration == 1){
-            liftR.setPosition(0.785);
-            liftL.setPosition(0.215);
+            liftR.setPosition(0.995 - servoDownPosition);
+            liftL.setPosition(servoDownPosition);
             }
         }
     }

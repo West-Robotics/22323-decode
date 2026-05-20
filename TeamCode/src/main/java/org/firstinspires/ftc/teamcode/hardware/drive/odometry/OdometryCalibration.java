@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.hardware.Gyro;
 import java.io.File;
 
 @TeleOp(name = "Odometry System Calibration", group = "Calibration")
+@Disabled
 public class OdometryCalibration extends LinearOpMode {
 
     // Drive motors
