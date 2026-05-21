@@ -113,12 +113,12 @@ public abstract class  Base_Robot_Auto extends OpMode {
         if (timer.seconds()<0.4){;
             liftL.setPosition(0.01);
             liftR.setPosition(0.99);
-            telemetry.addData("Status", "Outtake");
+            telemetry.addData("Status ", "Outtake");
             OutL.setPower(power); OutR.setPower(power);
         }else if (timer.seconds()>0.96) {
             timer.reset();
             iteration += 1;
-            telemetry.addData("Status", "Outtake Complete");
+            telemetry.addData("Status ", "Outtake Complete");
             if(iteration == 1) {
                 In.setPower(-1);
             }

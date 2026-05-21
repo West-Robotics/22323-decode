@@ -55,6 +55,6 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity(66.47046712596801)
-            .yVelocity(53.260846037344244);
+            .xVelocity(80.84568918783833)
+            .yVelocity(62.379005732498776);
 }

@@ -25,6 +25,7 @@ public class blue6Gate extends Base_Robot_Auto {
 
     @Override
     public void init() {
+        init_motor();
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         pathTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
@@ -47,14 +48,13 @@ public class blue6Gate extends Base_Robot_Auto {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        init_motor();
 
         // Log values to Panels and Driver Station
-        panelsTelemetry.debug("Path State", pathState);
-        panelsTelemetry.debug("is the timer being used?", timerUsed);
-        panelsTelemetry.debug("X", follower.getPose().getX());
-        panelsTelemetry.debug("Y", follower.getPose().getY());
-        panelsTelemetry.debug("Heading", follower.getPose().getHeading());
+        panelsTelemetry.debug("Path State ", pathState);
+        panelsTelemetry.debug("is the timer being used? ", timerUsed);
+        panelsTelemetry.debug("X: ", follower.getPose().getX());
+        panelsTelemetry.debug("Y: ", follower.getPose().getY());
+        panelsTelemetry.debug("Heading: ", follower.getPose().getHeading());
         panelsTelemetry.update(telemetry);
     }
 
@@ -187,7 +187,6 @@ public class blue6Gate extends Base_Robot_Auto {
                 setPathState(1);
                 break;
             case 1:
-
             /* You could check for
             - Follower State: "if(!follower.isBusy()) {}"
             - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
