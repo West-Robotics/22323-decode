@@ -20,9 +20,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(10)
-            .forwardZeroPowerAcceleration(-45.400846586442514)
-            .lateralZeroPowerAcceleration(-70.22445936114721)
+            .forwardZeroPowerAcceleration(-44.7683419323522)
+            .lateralZeroPowerAcceleration(-70.90354633367305)
+            //TODO: Look at the output of the translational tuner on Panels and try negating the PIDF's values
             .translationalPIDFCoefficients(new PIDFCoefficients(0.1,0, 0.01, 0.025))
+            //TODO: Test the Drive PIDF's to see if they behave the same as translational
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.025,0.0,0.0001,0.6,0.01))
             .mass(11);
 
@@ -33,7 +35,7 @@ public class Constants {
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
 
