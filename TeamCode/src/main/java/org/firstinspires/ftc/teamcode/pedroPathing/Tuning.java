@@ -569,7 +569,7 @@ class LateralVelocityTuner extends OpMode {
  */
 class ForwardZeroPowerAccelerationTuner extends OpMode {
     private final ArrayList<Double> accelerations = new ArrayList<>();
-    public static double VELOCITY = 30;
+    public static double VELOCITY = 80;
 
     private double previousVelocity;
     private long previousTimeNano;
@@ -579,7 +579,7 @@ class ForwardZeroPowerAccelerationTuner extends OpMode {
 
     @Override
     public void init() {
-        follower.setStartingPose(new Pose(72, 72));
+        follower.setStartingPose(new Pose(0, 0));
     }
 
     /** This initializes the drive motors as well as the Panels telemetryM. */
@@ -628,6 +628,8 @@ class ForwardZeroPowerAccelerationTuner extends OpMode {
                     stopping = true;
                     follower.setTeleOpDrive(0,0,0,true);
                 }
+                telemetryM.debug("Current Velocity "+ follower.getVelocity().dot(heading));
+                telemetryM.update(telemetry);
             } else {
                 double currentVelocity = follower.getVelocity().dot(heading);
                 accelerations.add((currentVelocity - previousVelocity) / ((System.nanoTime() - previousTimeNano) / Math.pow(10.0, 9)));
@@ -675,7 +677,7 @@ class ForwardZeroPowerAccelerationTuner extends OpMode {
  */
 class LateralZeroPowerAccelerationTuner extends OpMode {
     private final ArrayList<Double> accelerations = new ArrayList<>();
-    public static double VELOCITY = 30;
+    public static double VELOCITY = 62.379005732498776;
     private double previousVelocity;
     private long previousTimeNano;
     private boolean stopping;
@@ -1005,6 +1007,7 @@ class TranslationalTuner extends OpMode {
         telemetryM.addData("Zero Line", 0);
         telemetryM.addData("Error X", follower.errorCalculator.getTranslationalError().getXComponent());
         telemetryM.addData("Error Y", follower.errorCalculator.getTranslationalError().getYComponent());
+        telemetryM.addData("Heading ", follower.getHeading());
         telemetryM.update(telemetry);
     }
 }
