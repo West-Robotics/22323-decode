@@ -22,10 +22,10 @@ public class Constants {
             .mass(10)
             .forwardZeroPowerAcceleration(-44.7683419323522)
             .lateralZeroPowerAcceleration(-70.90354633367305)
-            //TODO: Look at the output of the translational tuner on Panels and try negating the PIDF's values
             .translationalPIDFCoefficients(new PIDFCoefficients(0.1,0, 0.01, 0.025))
-            //TODO: Test the Drive PIDF's to see if they behave the same as translational.
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.025,0.0,0.0001,0.6,0.01))
+            //TODO: Look at the output of the translational tuner on Panels and try negating the PIDF's values
+            //TODO: Test the Drive PIDF's to see if they behave the same as translational.
             .mass(11);
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.95, 0.6);

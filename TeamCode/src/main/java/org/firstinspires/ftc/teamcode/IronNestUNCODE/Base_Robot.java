@@ -134,7 +134,7 @@ public abstract class  Base_Robot extends LinearOpMode {
         double currentLeftVelocity = OutL.getVelocity();
         double currentRightVelocity = OutR.getVelocity();
         // Calculate the power adjustment using the PID controllers
-        if (gamepad1.right_trigger>0) {
+        if (gamepad1.right_trigger>0.2 || gamepad1.right_bumper) {
             leftFlywheelPower = leftFlywheelController.performPID(currentLeftVelocity);
             rightFlywheelPower = rightFlywheelController.performPID(currentRightVelocity);
             // Apply the calculated power to the motors
@@ -148,12 +148,9 @@ public abstract class  Base_Robot extends LinearOpMode {
 
     }
     public void manageIntake(){
-        if(gamepad1.left_trigger>.2||gamepad2.left_trigger>.2){
+        if(gamepad1.left_trigger>.2||gamepad2.left_trigger>.2 || gamepad1.right_trigger>0.2){
             In.setPower(-1);
             Boost.setPower(-1);
-        }else if(gamepad1.left_bumper||gamepad2.left_bumper){
-            In.setPower(0.25);
-            Boost.setPower(0.25);
         }else{
             In.setPower(0);
             Boost.setPower(0);
@@ -169,7 +166,7 @@ public abstract class  Base_Robot extends LinearOpMode {
             liftL.setPosition(servoDownPosition);
             flag = false;
         }
-        if(gamepad1.a && !flag){
+        if((gamepad1.a || gamepad1.right_trigger>0.2) && !flag){
             flag = true;
             servoTimer.resetTimer();
             iteration=0;

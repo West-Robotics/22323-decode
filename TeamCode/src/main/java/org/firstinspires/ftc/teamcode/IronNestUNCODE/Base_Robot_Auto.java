@@ -39,11 +39,13 @@ public abstract class  Base_Robot_Auto extends OpMode {
     public Follower follower; boolean timerUsed = false; private int iteration = 0;
     public int pathState;    public Timer pathTimer, actionTimer, opmodeTimer; // Timer for autonomous paths
     public ElapsedTime timer;
+    public static double servoDownPosition = 0.265;
+
     public static double MAX_AUTO_TURN = 0.6, MAX_AUTO_STRAFE = 0.5, MAX_AUTO_SPEED = 1;
     public static double DESIRED_DISTANCE = 48,SPEED_GAIN = 0.025,TURN_GAIN = 0.01;
     public static double flywheelk_P = 0.001,flywheelk_D = 0.0000000000001, flywheelk_i = 0.0001;
     private static double STRAFE_GAIN = 0.015;
-    public DcMotorEx FR, FL, BR, BL, OutL, OutR, In;
+    public DcMotorEx FR, FL, BR, BL, OutL, OutR, In, Boost;
     public VisionPortal visionPortal;
     final boolean USE_WEBCAM = true;
     public static final int DESIRED_TAG_ID = -1;
@@ -84,16 +86,19 @@ public abstract class  Base_Robot_Auto extends OpMode {
             liftR.setPosition(0.99);
             telemetry.addData("Status", "Outtake");
             OutL.setPower(0.95); OutR.setPower(0.95);
+            Boost.setPower(-1);
         }else if (timer.seconds()>0.96) {
             timer.reset();
             iteration += 1;
             telemetry.addData("Status", "Outtake Complete");
             if(iteration == 1) {
                 In.setPower(-1);
+                Boost.setPower(-1);
             }
             if(iteration == 3) {
                 OutL.setPower(0); OutR.setPower(0);
                 In.setPower(0);
+                Boost.setPower(0);
                 timerUsed = false;
                 follower.followPath(path);
                 setPathState(nextPath);
@@ -115,24 +120,27 @@ public abstract class  Base_Robot_Auto extends OpMode {
             liftR.setPosition(0.99);
             telemetry.addData("Status ", "Outtake");
             OutL.setPower(power); OutR.setPower(power);
+            Boost.setPower(-1);
         }else if (timer.seconds()>0.96) {
             timer.reset();
             iteration += 1;
             telemetry.addData("Status ", "Outtake Complete");
             if(iteration == 1) {
                 In.setPower(-1);
+                Boost.setPower(-1);
             }
             if(iteration == 3) {
                 OutL.setPower(0); OutR.setPower(0);
                 In.setPower(0);
+                Boost.setPower(0);
                 timerUsed = false;
                 follower.followPath(path);
                 setPathState(nextPath);
             }
 
         } else {
-            liftL.setPosition(0.22);
-            liftR.setPosition(0.78);
+            liftL.setPosition(servoDownPosition);
+            liftR.setPosition(0.995-servoDownPosition);
         }
     }
     public void init_motor(){
@@ -145,12 +153,14 @@ public abstract class  Base_Robot_Auto extends OpMode {
         this.In = hardwareMap.get(DcMotorEx.class, "intake");
         this.OutL = hardwareMap.get(DcMotorEx.class, "outtakeL");
         this.OutR = hardwareMap.get(DcMotorEx.class, "outtakeR");
+        this.Boost = hardwareMap.get(DcMotorEx.class, "booster");
 
         FR.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
         FL.setDirection(DcMotorSimple.Direction.FORWARD);
         BL.setDirection(DcMotorSimple.Direction.FORWARD);
         OutL.setDirection(DcMotorSimple.Direction.REVERSE);
+        Boost.setDirection(DcMotorSimple.Direction.REVERSE);
 
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

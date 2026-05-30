@@ -27,16 +27,17 @@ public class TeleV3 extends Base_Robot{
             controlFlywheels();
             manageIntake();
             manage_servos();
+            moveRobot();
 
-            // look for apriltags without breaking the code. ( makes sure that the apriltag is actually valid before doing anything)
-                if (gamepad1.right_bumper) {
-                    approachApriltags();
-                }else if (gamepad1.right_bumper && desiredTag == null) {
-                    moveRobot();
-                    panelsTelemetry.addLine("You tried but there was no aprilTag");
-                } else {
-                    moveRobot();
-                }
+//             look for apriltags without breaking the code. ( makes sure that the apriltag is actually valid before doing anything)
+//                if (gamepad1.right_bumper) {
+//                    approachApriltags();
+//                }else if (gamepad1.right_bumper && desiredTag == null) {
+//                    moveRobot();
+//                    panelsTelemetry.addLine("You tried but there was no aprilTag");
+//                } else {
+//                    moveRobot();
+//                }
 
             updateGamepads();
             // Crucial detecting information about the apriltag..
