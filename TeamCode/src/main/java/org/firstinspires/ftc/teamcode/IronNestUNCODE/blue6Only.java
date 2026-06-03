@@ -28,7 +28,7 @@ public class blue6Only extends Base_Robot_Auto {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         pathTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(22.4,126.3, Math.toRadians(320)));
+        follower.setStartingPose(new Pose(72, 8, Math.toRadians(90)));
         follower.setMaxPower(0.75);
         timer = new ElapsedTime();
 
@@ -74,60 +74,58 @@ public class blue6Only extends Base_Robot_Auto {
             follower.setConstraints(new PathConstraints(0.995, 0.1, 0.75, 0.05, 100, 1, 10, 1));
             Path1 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(22.4, 126.3),
-
-                                    new Pose(49, 101)
+                                    new Pose(19.000, 122.000),
+                                    new Pose(47.385, 94.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(320), Math.toRadians(320))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(320), Math.toRadians(320))
                     .build();
 
             Path2 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 101),
-
-                                    new Pose(49, 88)
+                                    new Pose(47.385, 94.000),
+                                    new Pose(47.385, 83.000)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(180))
+                    )
+                    .setConstantHeadingInterpolation(Math.toRadians(180))
 
                     .build();
 
             Path3 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 88),
-
-                                    new Pose(14, 88)
+                                    new Pose(47.385, 83.000),
+                                    new Pose(14.000, 83.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-
+                    )
+                    .setTangentHeadingInterpolation()
                     .build();
 
             Path4 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(14, 88),
-
-                                    new Pose(47.385, 88)
+                                    new Pose(14.000, 83.000),
+                                    new Pose(47.358, 94.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-
+                    )
+                    .setTangentHeadingInterpolation()
+                    .setReversed()
                     .build();
 
             Path8 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(47.385, 88),
-
-                                    new Pose(47.385, 94)
+                                    new Pose(47.358, 94.000),
+                                    new Pose(47.385, 94.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-
+                    )
+                    .setConstantHeadingInterpolation(Math.toRadians(320))
+                    .setReversed()
                     .build();
             Path9 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(47.385, 94),
-
-                                    new Pose(49, 101)
+                                    new Pose(47.385, 94.000),
+                                    new Pose(47.385, 115.000)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(320))
-
+                    )
+                    .setConstantHeadingInterpolation(Math.toRadians(320))
                     .build();
 
             Path10 = follower.pathBuilder().addPath(
