@@ -144,7 +144,7 @@ class LocalizationTest extends OpMode {
 
     @Override
     public void init() {
-        follower.setStartingPose(new Pose(72,72));
+        follower.setStartingPose(new Pose(0,0));
     }
 
     /** This initializes the PoseUpdater, the drive motors, and the Panels telemetry. */
@@ -215,7 +215,7 @@ class ForwardTuner extends OpMode {
 
     @Override
     public void init() {
-        follower.setStartingPose(new Pose(72,72));
+        follower.setStartingPose(new Pose(0,0));
         follower.update();
         drawCurrent();
     }
@@ -263,7 +263,7 @@ class LateralTuner extends OpMode {
 
     @Override
     public void init() {
-        follower.setStartingPose(new Pose(72,72));
+        follower.setStartingPose(new Pose(0,0));
         follower.update();
         drawCurrent();
     }
@@ -359,14 +359,14 @@ class TurnTuner extends OpMode {
  */
 class ForwardVelocityTuner extends OpMode {
     private final ArrayList<Double> velocities = new ArrayList<>();
-    public static double DISTANCE =100;
+    public static double DISTANCE = 48;
     public static double RECORD_NUMBER = 10;
 
     private boolean end;
 
     @Override
     public void init() {
-        follower.setStartingPose(new Pose(0, 0));
+        follower.setStartingPose(new Pose(72, 72));
     }
 
     /** This initializes the drive motors as well as the cache of velocities and the Panels telemetry. */
@@ -410,19 +410,17 @@ class ForwardVelocityTuner extends OpMode {
         follower.update();
         drawCurrentAndHistory();
 
+
         if (!end) {
-            if (Math.abs(follower.getPose().getX()) > (DISTANCE)) {
+            if (Math.abs(follower.getPose().getX()) > (DISTANCE + 72)) {
                 end = true;
                 stopRobot();
             } else {
-                telemetryM.update(telemetry);
-                telemetry.update();
                 follower.setTeleOpDrive(1,0,0,true);
                 //double currentVelocity = Math.abs(follower.getVelocity().getXComponent());
                 double currentVelocity = Math.abs(follower.poseTracker.getLocalizer().getVelocity().getX());
                 velocities.add(currentVelocity);
                 velocities.remove(0);
-                telemetryM.debug("X position: ", Math.abs(follower.getPose().getX()));
             }
         } else {
             stopRobot();
@@ -434,6 +432,7 @@ class ForwardVelocityTuner extends OpMode {
             telemetryM.debug("Forward Velocity: " + average);
             telemetryM.debug("\n");
             telemetryM.debug("Press A to set the Forward Velocity temporarily (while robot remains on).");
+
             for (int i = 0; i < velocities.size(); i++) {
                 telemetry.addData(String.valueOf(i), velocities.get(i));
             }
@@ -468,14 +467,14 @@ class ForwardVelocityTuner extends OpMode {
 class LateralVelocityTuner extends OpMode {
     private final ArrayList<Double> velocities = new ArrayList<>();
 
-    public static double DISTANCE = 90;
+    public static double DISTANCE = 48;
     public static double RECORD_NUMBER = 10;
 
     private boolean end;
 
     @Override
     public void init() {
-        follower.setStartingPose(new Pose(0, 0));
+        follower.setStartingPose(new Pose(72, 72));
     }
 
     /**
@@ -521,7 +520,7 @@ class LateralVelocityTuner extends OpMode {
         drawCurrentAndHistory();
 
         if (!end) {
-            if (Math.abs(follower.getPose().getY()) > (DISTANCE)) {
+            if (Math.abs(follower.getPose().getY()) > (DISTANCE + 72)) {
                 end = true;
                 stopRobot();
             } else {
@@ -569,7 +568,7 @@ class LateralVelocityTuner extends OpMode {
  */
 class ForwardZeroPowerAccelerationTuner extends OpMode {
     private final ArrayList<Double> accelerations = new ArrayList<>();
-    public static double VELOCITY = 80;
+    public static double VELOCITY = 30;
 
     private double previousVelocity;
     private long previousTimeNano;
@@ -579,7 +578,7 @@ class ForwardZeroPowerAccelerationTuner extends OpMode {
 
     @Override
     public void init() {
-        follower.setStartingPose(new Pose(0, 0));
+        follower.setStartingPose(new Pose(72, 72));
     }
 
     /** This initializes the drive motors as well as the Panels telemetryM. */
@@ -628,8 +627,6 @@ class ForwardZeroPowerAccelerationTuner extends OpMode {
                     stopping = true;
                     follower.setTeleOpDrive(0,0,0,true);
                 }
-                telemetryM.debug("Current Velocity "+ follower.getVelocity().dot(heading));
-                telemetryM.update(telemetry);
             } else {
                 double currentVelocity = follower.getVelocity().dot(heading);
                 accelerations.add((currentVelocity - previousVelocity) / ((System.nanoTime() - previousTimeNano) / Math.pow(10.0, 9)));
@@ -677,7 +674,7 @@ class ForwardZeroPowerAccelerationTuner extends OpMode {
  */
 class LateralZeroPowerAccelerationTuner extends OpMode {
     private final ArrayList<Double> accelerations = new ArrayList<>();
-    public static double VELOCITY = 62.379005732498776;
+    public static double VELOCITY = 30;
     private double previousVelocity;
     private long previousTimeNano;
     private boolean stopping;
@@ -1007,7 +1004,6 @@ class TranslationalTuner extends OpMode {
         telemetryM.addData("Zero Line", 0);
         telemetryM.addData("Error X", follower.errorCalculator.getTranslationalError().getXComponent());
         telemetryM.addData("Error Y", follower.errorCalculator.getTranslationalError().getYComponent());
-        telemetryM.addData("Heading ", follower.getHeading());
         telemetryM.update(telemetry);
     }
 }
@@ -1104,7 +1100,7 @@ class DriveTuner extends OpMode {
 
     @Override
     public void init() {
-        follower.setStartingPose(new Pose(0, 0));
+        follower.setStartingPose(new Pose(72, 72));
     }
 
     /**
@@ -1128,13 +1124,13 @@ class DriveTuner extends OpMode {
 
         forwards = follower.pathBuilder()
                 .setGlobalDeceleration()
-                .addPath(new BezierLine(new Pose(0,0), new Pose(DISTANCE ,0)))
+                .addPath(new BezierLine(new Pose(72,72), new Pose(DISTANCE + 72,72)))
                 .setConstantHeadingInterpolation(0)
                 .build();
 
         backwards = follower.pathBuilder()
                 .setGlobalDeceleration()
-                .addPath(new BezierLine(new Pose(DISTANCE ,0), new Pose(0,0)))
+                .addPath(new BezierLine(new Pose(DISTANCE + 72,72), new Pose(72,72)))
                 .setConstantHeadingInterpolation(0)
                 .build();
 
