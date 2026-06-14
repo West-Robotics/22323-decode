@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
+import static java.lang.Thread.sleep;
+
 import android.health.connect.datatypes.units.Power;
 import android.util.Size;
 
@@ -36,11 +38,10 @@ import java.util.concurrent.TimeUnit;
 
 @Configurable
 public abstract class  Base_Robot_Auto extends OpMode {
-    public Follower follower; boolean timerUsed = false; private int iteration = 0;
+    public Follower follower; boolean timerUsed = false;
+    private int iteration = 0;
     public int pathState;    public Timer pathTimer, actionTimer, opmodeTimer; // Timer for autonomous paths
-    public ElapsedTime timer;
-    public static double servoDownPosition = 0.265;
-
+    public  ElapsedTime timer;
     public static double MAX_AUTO_TURN = 0.6, MAX_AUTO_STRAFE = 0.5, MAX_AUTO_SPEED = 1;
     public static double DESIRED_DISTANCE = 48,SPEED_GAIN = 0.025,TURN_GAIN = 0.01;
     public static double flywheelk_P = 0.001,flywheelk_D = 0.0000000000001, flywheelk_i = 0.0001;
@@ -62,28 +63,43 @@ public abstract class  Base_Robot_Auto extends OpMode {
     public GamepadManager g2_panels_manager;
     public double rangeError, headingError, yawError;
     public double drive,turn,strafe;
-    public AprilTagStreamProcessor apriltagStreamProcessor;
-    /*
-    TO DO:
-    - calibrate the camera using the tutorial found here: https://ftc-docs.firstinspires.org/en/latest/programming_resources/vision/camera_calibration/camera-calibration.html
-    - test and run teleop. make sure nothing is inverted and basic functionality works
-    - test auto aim:
-      - graph the variables in ftc panels and get a sense of what is happening and why the auto aim keeps going straight into the apriltag even after reaching desired distance
+    public static double servoUpPosition = 0.045;
 
-     */
+    public static double servoDownPosition = 0.3;
+    public AprilTagStreamProcessor apriltagStreamProcessor;
+    boolean delayUsed=false;
+
+    public void leave(){
+        if(!timerUsed){
+            timer = new ElapsedTime();
+            timerUsed = true;
+        }
+        if(timer.milliseconds() >= 750){
+        FL.setPower(0);FR.setPower(0);BL.setPower(0);BR.setPower(0);}
+        else {
+            FL.setPower(-0.5);
+            FR.setPower(-0.5);
+            BL.setPower(-0.5);
+            BR.setPower(-0.5);
+        }
+    }
     public void setPathState(int pState) {
         pathState = pState;
     }
 
-    public void launch(PathChain path, int nextPath){
+    public void launch(PathChain path, int nextPath) throws InterruptedException {
+        if(!delayUsed){
+            sleep(200);
+            delayUsed = true;
+        }
         if (!timerUsed){
             timer.reset();
             iteration = 0;
             timerUsed = true;
         }
         if (timer.seconds()<0.4){;
-            liftL.setPosition(0.01);
-            liftR.setPosition(0.99);
+            liftL.setPosition(servoUpPosition);
+            liftR.setPosition(1.03-servoUpPosition);
             telemetry.addData("Status", "Outtake");
             OutL.setPower(0.95); OutR.setPower(0.95);
             Boost.setPower(-1);
@@ -105,8 +121,8 @@ public abstract class  Base_Robot_Auto extends OpMode {
             }
 
         } else {
-            liftL.setPosition(0.22);
-            liftR.setPosition(0.78);
+            liftL.setPosition(servoDownPosition);
+            liftR.setPosition(1.03-servoDownPosition);
         }
     }
     public void launch(PathChain path, int nextPath,double power){
@@ -116,8 +132,8 @@ public abstract class  Base_Robot_Auto extends OpMode {
             timerUsed = true;
         }
         if (timer.seconds()<0.4){;
-            liftL.setPosition(0.01);
-            liftR.setPosition(0.99);
+            liftL.setPosition(servoUpPosition);
+            liftR.setPosition(1.03-servoUpPosition);
             telemetry.addData("Status ", "Outtake");
             OutL.setPower(power); OutR.setPower(power);
             Boost.setPower(-1);
@@ -140,7 +156,7 @@ public abstract class  Base_Robot_Auto extends OpMode {
 
         } else {
             liftL.setPosition(servoDownPosition);
-            liftR.setPosition(0.995-servoDownPosition);
+            liftR.setPosition(1.03-servoDownPosition);
         }
     }
     public void init_motor(){

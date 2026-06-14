@@ -168,30 +168,21 @@ public class blue6Only extends Base_Robot_Auto {
                 }
                 break;
             case 2:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
-
-                /* Grab Sample */
-
-                /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                 if(!follower.isBusy()){
                     In.setPower(-1);
+                    Boost.setPower(-1);
                     follower.setMaxPower(0.6);
                     follower.followPath(paths.Path3);
                     setPathState(3);
                 }
                 break;
             case 3:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                /* Score Sample */
-
-                /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                 if(!follower.isBusy()){
                     follower.breakFollowing();
                     follower.setMaxPower(0.75);
                     sleep(500);
-                    In.setPower(0.2);
-                    sleep(600);
                     In.setPower(0);
+                    Boost.setPower(0);
                     follower.followPath(paths.Path4);
                     setPathState(4);
                 }

@@ -27,7 +27,7 @@ public class Constants {
             .forwardEncoderDirection(Encoder.FORWARD)
             .strafeEncoderDirection(Encoder.FORWARD)
             .strafePodX(-7.805)
-            .forwardPodY(3.695)
+            .forwardPodY(-3.695)
             .forwardEncoder_HardwareMapName("BackR")
             .strafeEncoder_HardwareMapName("FrontR")
             .IMU_HardwareMapName("imu")

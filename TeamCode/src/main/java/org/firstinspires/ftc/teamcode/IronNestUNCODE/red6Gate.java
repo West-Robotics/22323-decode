@@ -214,6 +214,7 @@ public class red6Gate extends Base_Robot_Auto {
                 /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                 if(!follower.isBusy()){
                     In.setPower(-1);
+                    Boost.setPower(-1);
                     follower.setMaxPower(0.65);
                     follower.followPath(paths.Path3);
                     setPathState(3);
@@ -229,8 +230,7 @@ public class red6Gate extends Base_Robot_Auto {
                     //Yes, it can get faster
                     follower.setMaxPower(0.85);
                     sleep(500);
-                    In.setPower(0.2);
-                    sleep(600);
+                    Boost.setPower(0);
                     In.setPower(0);
                     //The custom waiting to sync w/ Avery
                     sleep(0);

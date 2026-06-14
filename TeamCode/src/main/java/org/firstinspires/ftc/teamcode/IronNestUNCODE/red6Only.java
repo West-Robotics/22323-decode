@@ -175,6 +175,7 @@ public class red6Only extends Base_Robot_Auto {
                 /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                 if(!follower.isBusy()){
                     In.setPower(-1);
+                    Boost.setPower(-1);
                     follower.setMaxPower(0.6);
                     follower.followPath(paths.Path3);
                     setPathState(3);
@@ -190,8 +191,7 @@ public class red6Only extends Base_Robot_Auto {
                     follower.breakFollowing();
                     follower.setMaxPower(0.75);
                     sleep(500);
-                    In.setPower(0.2);
-                    sleep(600);
+                    Boost.setPower(0);
                     In.setPower(0);
                     follower.followPath(paths.Path4);
                     setPathState(4);
