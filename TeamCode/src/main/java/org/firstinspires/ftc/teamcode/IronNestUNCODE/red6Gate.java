@@ -189,29 +189,12 @@ public class red6Gate extends Base_Robot_Auto {
                 setPathState(1);
                 break;
             case 1:
-
-            /* You could check for
-            - Follower State: "if(!follower.isBusy()) {}"
-            - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
-            - Robot Position: "if(follower.getPose().getX() > 36) {}"
-            */
-
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                /* Score Preload */
-
-                /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                 if(!follower.isBusy()){
-                    //follower.breakFollowing();
                     // 1st Launch Here
                     launch(paths.Path2,2,0.925);
                 }
                 break;
             case 2:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
-
-                /* Grab Sample */
-
-                /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                 if(!follower.isBusy()){
                     In.setPower(-1);
                     Boost.setPower(-1);
@@ -221,46 +204,37 @@ public class red6Gate extends Base_Robot_Auto {
                 }
                 break;
             case 3:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                /* Score Sample */
+                //if it can't finish the path, just give up and do the next path
+                if (!timerUsed){
+                    timer.reset();
+                    timerUsed = true;
+                }
 
-                /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                if(!follower.isBusy()){
+                if(!follower.isBusy() || timer.seconds()>3){
                     follower.breakFollowing();
-                    //Yes, it can get faster
-                    follower.setMaxPower(0.85);
+                    follower.setMaxPower(0.75);
                     sleep(500);
-                    Boost.setPower(0);
                     In.setPower(0);
-                    //The custom waiting to sync w/ Avery
-                    sleep(0);
+                    Boost.setPower(0);
+                    timerUsed = false;
                     follower.followPath(paths.Path4);
                     setPathState(4);
                 }
                 break;
             case 4:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
-                /* Grab Sample */
-
-                /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                 if(!follower.isBusy()){
                     follower.followPath(paths.Path5);
                     setPathState(5);
                 }
                 break;
             case 5:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-
-                /* Score Sample */
-
-                /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                 if(!follower.isBusy()){
                     follower.followPath(paths.Path6);
                     setPathState(6);
                 }
                 break;
             case 6:
-                //if it can't get to the gate, just give up and go launch
+                //if it can't finish the path, just give up and do the next path
                 if (!timerUsed){
                     timer.reset();
                     timerUsed = true;
@@ -272,7 +246,6 @@ public class red6Gate extends Base_Robot_Auto {
                 }
 
                 if(!follower.isBusy()){
-                    //follower.breakFollowing();
                     //shorter wait here for sync
                     if (!gateHoldTimerUsed){
                         gateHoldTimer.reset();
@@ -309,11 +282,8 @@ public class red6Gate extends Base_Robot_Auto {
                 }
                 break;
             case 10:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                /* Set the state to a Case we won't use or define, so it just stops running an new paths */
                 setPathState(-1);
                 break;
         }
     }
 }
-    

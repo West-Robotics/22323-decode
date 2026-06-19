@@ -199,6 +199,7 @@ public class red9Only extends Base_Robot_Auto {
     public void autonomousPathUpdate() throws InterruptedException {
         switch (pathState) {
             case 0:
+                follower.setMaxPower(0.75);
                 follower.followPath(paths.Path1);
                 setPathState(1);
                 break;
@@ -217,7 +218,7 @@ public class red9Only extends Base_Robot_Auto {
                 if(!follower.isBusy()){
                     follower.breakFollowing();
                     // 1st Launch Here
-                    launch(paths.Path2,2,0.93);
+                    launch(paths.Path2,2);
                 }
                 break;
             case 2:
@@ -235,17 +236,19 @@ public class red9Only extends Base_Robot_Auto {
                 }
                 break;
             case 3:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                /* Score Sample */
+                //if it can't finish the path, just give up and do the next path
+                if (!timerUsed){
+                    timer.reset();
+                    timerUsed = true;
+                }
 
-
-                /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                if(!follower.isBusy()){
+                if(!follower.isBusy() || timer.seconds()>3){
                     follower.breakFollowing();
                     follower.setMaxPower(0.75);
                     sleep(500);
-                    Boost.setPower(0);
                     In.setPower(0);
+                    Boost.setPower(0);
+                    timerUsed = false;
                     follower.followPath(paths.Path4);
                     setPathState(4);
                 }
@@ -281,11 +284,19 @@ public class red9Only extends Base_Robot_Auto {
                 }
                 break;
             case 11:
-                if(!follower.isBusy()){
+                //if it can't finish the path, just give up and do the next path
+                if (!timerUsed){
+                    timer.reset();
+                    timerUsed = true;
+                }
+
+                if(!follower.isBusy() || timer.seconds()>3.5){
                     follower.breakFollowing();
+                    follower.setMaxPower(0.75);
                     sleep(500);
-                    Boost.setPower(0);
                     In.setPower(0);
+                    Boost.setPower(0);
+                    timerUsed = false;
                     follower.followPath(paths.Path12);
                     setPathState(12);
                 }

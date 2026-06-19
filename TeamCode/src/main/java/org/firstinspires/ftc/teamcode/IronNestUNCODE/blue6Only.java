@@ -177,12 +177,19 @@ public class blue6Only extends Base_Robot_Auto {
                 }
                 break;
             case 3:
-                if(!follower.isBusy()){
+                //if it can't finish the path, just give up and do the next path
+                if (!timerUsed){
+                    timer.reset();
+                    timerUsed = true;
+                }
+
+                if(!follower.isBusy() || timer.seconds()>3){
                     follower.breakFollowing();
                     follower.setMaxPower(0.75);
                     sleep(500);
                     In.setPower(0);
                     Boost.setPower(0);
+                    timerUsed = false;
                     follower.followPath(paths.Path4);
                     setPathState(4);
                 }

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
 import static java.lang.Thread.sleep;
 
-import android.health.connect.datatypes.units.Power;
 import android.util.Size;
 
 import com.bylazar.camerastream.PanelsCameraStream;
@@ -13,7 +12,6 @@ import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -22,8 +20,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.teamcode.util.control.PIDController;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -34,7 +30,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Configurable
 public abstract class  Base_Robot_Auto extends OpMode {
@@ -63,11 +58,12 @@ public abstract class  Base_Robot_Auto extends OpMode {
     public GamepadManager g2_panels_manager;
     public double rangeError, headingError, yawError;
     public double drive,turn,strafe;
-    public static double servoUpPosition = 0.045;
+    public static double servoUpPosition = 0.030;
 
     public static double servoDownPosition = 0.3;
     public AprilTagStreamProcessor apriltagStreamProcessor;
-    boolean delayUsed=false;
+    boolean extraLaunch = true;
+
 
     public void leave(){
         if(!timerUsed){
@@ -88,10 +84,6 @@ public abstract class  Base_Robot_Auto extends OpMode {
     }
 
     public void launch(PathChain path, int nextPath) throws InterruptedException {
-        if(!delayUsed){
-            sleep(200);
-            delayUsed = true;
-        }
         if (!timerUsed){
             timer.reset();
             iteration = 0;
@@ -111,11 +103,12 @@ public abstract class  Base_Robot_Auto extends OpMode {
                 In.setPower(-1);
                 Boost.setPower(-1);
             }
-            if(iteration == 3) {
+            if((iteration == 3 && !extraLaunch) || (iteration == 4 && extraLaunch)) {
                 OutL.setPower(0); OutR.setPower(0);
                 In.setPower(0);
                 Boost.setPower(0);
                 timerUsed = false;
+                extraLaunch = false;
                 follower.followPath(path);
                 setPathState(nextPath);
             }
@@ -125,7 +118,7 @@ public abstract class  Base_Robot_Auto extends OpMode {
             liftR.setPosition(1.03-servoDownPosition);
         }
     }
-    public void launch(PathChain path, int nextPath,double power){
+    public void launch(PathChain path, int nextPath,double power) throws InterruptedException{
         if (!timerUsed){
             timer.reset();
             iteration = 0;
@@ -145,11 +138,12 @@ public abstract class  Base_Robot_Auto extends OpMode {
                 In.setPower(-1);
                 Boost.setPower(-1);
             }
-            if(iteration == 3) {
+            if((iteration == 3 && !extraLaunch) || (iteration == 4 && extraLaunch)) {
                 OutL.setPower(0); OutR.setPower(0);
                 In.setPower(0);
                 Boost.setPower(0);
                 timerUsed = false;
+                extraLaunch = false;
                 follower.followPath(path);
                 setPathState(nextPath);
             }

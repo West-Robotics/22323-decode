@@ -29,7 +29,7 @@ public class blue9Only extends Base_Robot_Auto {
         pathTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(22.4,126.3, Math.toRadians(320)));
-        follower.setMaxPower(1);
+        follower.setMaxPower(0.75);
         timer = new ElapsedTime();
 
         paths = new Paths(follower); // Build paths
@@ -201,6 +201,7 @@ public class blue9Only extends Base_Robot_Auto {
     public void autonomousPathUpdate() throws InterruptedException {
         switch (pathState) {
             case 0:
+                follower.setMaxPower(0.75);
                 follower.followPath(paths.Path1);
                 setPathState(1);
                 break;
@@ -232,12 +233,19 @@ public class blue9Only extends Base_Robot_Auto {
                 }
                 break;
             case 3:
-                if(!follower.isBusy()){
+                //if it can't finish the path, just give up and do the next path
+                if (!timerUsed){
+                    timer.reset();
+                    timerUsed = true;
+                }
+
+                if(!follower.isBusy() || timer.seconds()>3){
                     follower.breakFollowing();
                     follower.setMaxPower(0.75);
                     sleep(500);
                     In.setPower(0);
                     Boost.setPower(0);
+                    timerUsed = false;
                     follower.followPath(paths.Path4);
                     setPathState(4);
                 }
@@ -269,11 +277,19 @@ public class blue9Only extends Base_Robot_Auto {
                 }
                 break;
             case 11:
-                if(!follower.isBusy()){
+                //if it can't finish the path, just give up and do the next path
+                if (!timerUsed){
+                    timer.reset();
+                    timerUsed = true;
+                }
+
+                if(!follower.isBusy() || timer.seconds()>3.5){
                     follower.breakFollowing();
+                    follower.setMaxPower(0.75);
                     sleep(500);
-                    Boost.setPower(0);
                     In.setPower(0);
+                    Boost.setPower(0);
+                    timerUsed = false;
                     follower.followPath(paths.Path12);
                     setPathState(12);
                 }
