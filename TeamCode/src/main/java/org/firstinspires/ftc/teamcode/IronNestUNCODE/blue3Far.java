@@ -38,25 +38,24 @@ double waitTime = 0;
         setPathState(0);
     }
     public void init_loop() {
-
         paths = new blue3Far.Paths(follower); // Build paths---
         panelsTelemetry.debug("Current wait time selected: ",waitTime);
-        panelsTelemetry.debug("Dpad Up for 20.5 seconds");
-        panelsTelemetry.debug("Dpad Left for 15 seconds");
+        panelsTelemetry.debug("Dpad Up +1s");
+        panelsTelemetry.debug("Dpad Left for 20.5 seconds");
         panelsTelemetry.debug("Dpad Right for 10 seconds");
-        panelsTelemetry.debug("Dpad Down for 5 seconds");
+        panelsTelemetry.debug("Dpad Down -1s");
         panelsTelemetry.debug("Left Bumper for 0 seconds");
         panelsTelemetry.debug("Press start to confirm");
         panelsTelemetry.update(telemetry);
         if (gamepad1.dpad_up) {
-            waitTime = 20.5;
+            waitTime +=1;
         }
         if (gamepad1.dpad_down)
-            waitTime = 5;
+            waitTime -=1;
         if (gamepad1.dpad_left)
-            waitTime = 15;
+            waitTime = 20.5;
         if (gamepad1.dpad_right)
-            waitTime = 10;
+            waitTime = 15;
         if(gamepad1.left_bumper)
             waitTime =0;
     }

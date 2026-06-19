@@ -23,6 +23,7 @@ public class red3Far extends Base_Robot_Auto {
     private ElapsedTime gateHoldTimer;
     boolean gateHoldTimerUsed = false;
     double waitTime=0;
+    boolean isIncrementing = false;
 
 
     @Override
@@ -36,31 +37,35 @@ public class red3Far extends Base_Robot_Auto {
         timer = new ElapsedTime();
         gateHoldTimer = new ElapsedTime();
 
-        panelsTelemetry.debug("Status", "Initialized");
-        panelsTelemetry.update(telemetry);
+        paths = new Paths(follower); // Build paths---
         setPathState(0);
     }
     public void init_loop() {
-        paths = new Paths(follower); // Build paths---
-        panelsTelemetry.debug("Current wait time selected: ",waitTime);
-        panelsTelemetry.debug("Dpad Up for 20.5 seconds");
-        panelsTelemetry.debug("Dpad Left for 15 seconds");
-        panelsTelemetry.debug("Dpad Right for 10 seconds");
-        panelsTelemetry.debug("Dpad Down for 5 seconds");
+        panelsTelemetry.debug("Current wait time: ",waitTime);
+        panelsTelemetry.debug("Dpad Up +1s");
+        panelsTelemetry.debug("Dpad Down -1s");
+        panelsTelemetry.debug("Dpad Left for 20.5 seconds");
+        panelsTelemetry.debug("Dpad Right for 5 seconds");
         panelsTelemetry.debug("Left Bumper for 0 seconds");
-        panelsTelemetry.debug("Press start to confirm");
         panelsTelemetry.update(telemetry);
-        if (gamepad1.dpad_up) {
-            waitTime = 20.5;
+        if (gamepad1.dpad_up  && !isIncrementing) {
+            waitTime +=1;
+            isIncrementing = true;
         }
-        if (gamepad1.dpad_down)
-            waitTime = 5;
+        if (gamepad1.dpad_down && !isIncrementing)
+            waitTime -=1;
+        isIncrementing = true;
         if (gamepad1.dpad_left)
-            waitTime = 15;
+            waitTime = 20.5;
         if (gamepad1.dpad_right)
-            waitTime = 10;
+            waitTime = 5;
         if(gamepad1.left_bumper)
             waitTime =0;
+        if(!gamepad1.dpad_down && !gamepad1.dpad_up)
+            isIncrementing = false;
+        if(waitTime<0)
+            waitTime = 0;
+
     }
     @Override
     public void loop() {
