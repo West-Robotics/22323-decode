@@ -27,7 +27,6 @@ public class red9Only extends Base_Robot_Auto {
         pathTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(-22.4,126.3, Math.toRadians(220)));
-        follower.setMaxPower(1);
         timer = new ElapsedTime();
 
         paths = new Paths(follower); // Build paths
@@ -128,7 +127,7 @@ public class red9Only extends Base_Robot_Auto {
 
                                     new Pose(-49, 101)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(220))
+                    ).setConstantHeadingInterpolation(Math.toRadians(225))
 
                     .build();
 
@@ -179,7 +178,7 @@ public class red9Only extends Base_Robot_Auto {
 
                                     new Pose(-49, 101)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(220))
+                    ).setConstantHeadingInterpolation(Math.toRadians(225))
 
                     .build();
             //leave
@@ -189,7 +188,7 @@ public class red9Only extends Base_Robot_Auto {
 
                                     new Pose(-49, 120)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(220))
+                    ).setConstantHeadingInterpolation(Math.toRadians(225))
 
                     .build();
         }

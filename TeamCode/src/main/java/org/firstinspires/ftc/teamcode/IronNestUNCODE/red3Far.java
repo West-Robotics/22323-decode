@@ -33,8 +33,7 @@ public class red3Far extends Base_Robot_Auto {
         follower.setMaxPower(0.975);
         timer = new ElapsedTime();
         gateHoldTimer = new ElapsedTime();
-
-        paths = new Paths(follower); // Build paths
+        paths = new Paths(follower); // Build paths---
 
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
@@ -58,8 +57,6 @@ public class red3Far extends Base_Robot_Auto {
         panelsTelemetry.debug("Heading", follower.getPose().getHeading());
         panelsTelemetry.update(telemetry);
     }
-
-
     public static class Paths {
         public PathChain Path1;
         public PathChain Path2;
@@ -93,9 +90,16 @@ public class red3Far extends Base_Robot_Auto {
     public void autonomousPathUpdate() throws InterruptedException {
         switch (pathState) {
             case 0:
-                sleep(20500);
-                follower.followPath(paths.Path1);
-                setPathState(1);
+                if(timerUsed)
+                {
+                    timer.reset();
+                    timerUsed=true;
+                }
+                if(timer.seconds()>20.5){
+                    follower.followPath(paths.Path1);
+                    setPathState(1);
+                    timerUsed=false;
+                }
                 break;
             case 1:
                 if(!follower.isBusy()){

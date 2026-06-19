@@ -24,6 +24,7 @@ public class blue3Far extends Base_Robot_Auto {
     boolean gateHoldTimerUsed = false;
 
 
+
     @Override
     public void init() {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -93,9 +94,16 @@ public class blue3Far extends Base_Robot_Auto {
     public void autonomousPathUpdate() throws InterruptedException {
         switch (pathState) {
             case 0:
-                sleep(20500);
+               if(timerUsed)
+               {
+                   timer.reset();
+                   timerUsed=true;
+               }
+               if(timer.seconds()>20.5){
                 follower.followPath(paths.Path1);
                 setPathState(1);
+                timerUsed=false;
+               }
                 break;
             case 1:
                 if(!follower.isBusy()){
