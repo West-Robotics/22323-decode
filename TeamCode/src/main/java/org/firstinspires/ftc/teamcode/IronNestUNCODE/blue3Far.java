@@ -1,6 +1,5 @@
 
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
-import static java.lang.Thread.sleep;
 
 import com.pedropathing.paths.PathConstraints;
 import com.pedropathing.util.Timer;
@@ -8,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.TelemetryManager;
 import com.bylazar.telemetry.PanelsTelemetry;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
@@ -20,26 +19,46 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class blue3Far extends Base_Robot_Auto {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
     private Paths paths; // Paths defined in the Paths class
-    private ElapsedTime gateHoldTimer;
     boolean gateHoldTimerUsed = false;
 
-
+double waitTime = 0;
 
     @Override
-    public void init() {
+    public void init(){
+        waitTime = 0;
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         pathTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(59,9, Math.toRadians(90)));
         follower.setMaxPower(0.975);
         timer = new ElapsedTime();
-        gateHoldTimer = new ElapsedTime();
-
-        paths = new Paths(follower); // Build paths
 
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
         setPathState(0);
+    }
+    public void init_loop() {
+
+        paths = new blue3Far.Paths(follower); // Build paths---
+        panelsTelemetry.debug("Current wait time selected: ",waitTime);
+        panelsTelemetry.debug("Dpad Up for 20.5 seconds");
+        panelsTelemetry.debug("Dpad Left for 15 seconds");
+        panelsTelemetry.debug("Dpad Right for 10 seconds");
+        panelsTelemetry.debug("Dpad Down for 5 seconds");
+        panelsTelemetry.debug("Left Bumper for 0 seconds");
+        panelsTelemetry.debug("Press start to confirm");
+        panelsTelemetry.update(telemetry);
+        if (gamepad1.dpad_up) {
+            waitTime = 20.5;
+        }
+        if (gamepad1.dpad_down)
+            waitTime = 5;
+        if (gamepad1.dpad_left)
+            waitTime = 15;
+        if (gamepad1.dpad_right)
+            waitTime = 10;
+        if(gamepad1.left_bumper)
+            waitTime =0;
     }
     @Override
     public void loop() {
@@ -94,12 +113,12 @@ public class blue3Far extends Base_Robot_Auto {
     public void autonomousPathUpdate() throws InterruptedException {
         switch (pathState) {
             case 0:
-               if(timerUsed)
+               if(!timerUsed)
                {
                    timer.reset();
                    timerUsed=true;
                }
-               if(timer.seconds()>20.5){
+               if(timer.seconds()>waitTime){
                 follower.followPath(paths.Path1);
                 setPathState(1);
                 timerUsed=false;
