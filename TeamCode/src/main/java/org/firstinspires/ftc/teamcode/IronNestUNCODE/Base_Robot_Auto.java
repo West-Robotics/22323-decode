@@ -66,18 +66,9 @@ public abstract class  Base_Robot_Auto extends OpMode {
 
 
     public void leave(){
-        if(!timerUsed){
-            timer = new ElapsedTime();
-            timerUsed = true;
-        }
-        if(timer.milliseconds() >= 750){
-        FL.setPower(0);FR.setPower(0);BL.setPower(0);BR.setPower(0);}
-        else {
-            FL.setPower(-0.5);
-            FR.setPower(-0.5);
-            BL.setPower(-0.5);
-            BR.setPower(-0.5);
-        }
+        if(!timerUsed){timer = new ElapsedTime();timerUsed = true;}
+        if(timer.milliseconds() >= 750){FL.setPower(0);FR.setPower(0);BL.setPower(0);BR.setPower(0);}
+        else {FL.setPower(-0.5);FR.setPower(-0.5);BL.setPower(-0.5);BR.setPower(-0.5);}
     }
     public void setPathState(int pState) {
         pathState = pState;

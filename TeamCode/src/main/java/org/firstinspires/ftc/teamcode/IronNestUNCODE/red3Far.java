@@ -1,6 +1,5 @@
 
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
-import static java.lang.Thread.sleep;
 
 import com.pedropathing.paths.PathConstraints;
 import com.pedropathing.util.Timer;
@@ -8,19 +7,18 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.TelemetryManager;
 import com.bylazar.telemetry.PanelsTelemetry;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "red3Far", group = "Autonomous")
+@Autonomous(name = "red3Far \uD83D\uDFE5", group = "Autonomous")
 @Configurable // Panels
 public class red3Far extends Base_Robot_Auto {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
     private Paths paths; // Paths defined in the Paths class
-    private ElapsedTime gateHoldTimer;
     boolean gateHoldTimerUsed = false;
     double waitTime=0;
     boolean isIncrementing = false;
@@ -35,17 +33,17 @@ public class red3Far extends Base_Robot_Auto {
         follower.setStartingPose(new Pose(59,9, Math.toRadians(90)));
         follower.setMaxPower(0.975);
         timer = new ElapsedTime();
-        gateHoldTimer = new ElapsedTime();
 
         paths = new Paths(follower); // Build paths---
         setPathState(0);
     }
     public void init_loop() {
+        paths = new red3Far.Paths(follower);
         panelsTelemetry.debug("Current wait time: ",waitTime);
         panelsTelemetry.debug("Dpad Up +1s");
-        panelsTelemetry.debug("Dpad Down -1s");
         panelsTelemetry.debug("Dpad Left for 20.5 seconds");
-        panelsTelemetry.debug("Dpad Right for 5 seconds");
+        panelsTelemetry.debug("Dpad Right for 10 seconds");
+        panelsTelemetry.debug("Dpad Down -1s");
         panelsTelemetry.debug("Left Bumper for 0 seconds");
         panelsTelemetry.update(telemetry);
         if (gamepad1.dpad_up  && !isIncrementing) {
@@ -85,6 +83,8 @@ public class red3Far extends Base_Robot_Auto {
         panelsTelemetry.debug("Heading", follower.getPose().getHeading());
         panelsTelemetry.update(telemetry);
     }
+
+
     public static class Paths {
         public PathChain Path1;
         public PathChain Path2;

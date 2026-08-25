@@ -16,7 +16,7 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "red6Only", group = "Autonomous")
+@Autonomous(name = "red6Only \uD83D\uDFE5", group = "Autonomous")
 @Configurable // Panels
 public class red6Only extends Base_Robot_Auto {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance

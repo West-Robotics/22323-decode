@@ -15,7 +15,7 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "red9Only", group = "Autonomous")
+@Autonomous(name = "red9Only \uD83D\uDFE5", group = "Autonomous")
 @Configurable // Panels
 public class red9Only extends Base_Robot_Auto {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
@@ -241,7 +241,7 @@ public class red9Only extends Base_Robot_Auto {
                     timerUsed = true;
                 }
 
-                if(!follower.isBusy() || timer.seconds()>3){
+                if(!follower.isBusy() || timer.seconds()>2.5){
                     follower.breakFollowing();
                     follower.setMaxPower(0.75);
                     sleep(500);

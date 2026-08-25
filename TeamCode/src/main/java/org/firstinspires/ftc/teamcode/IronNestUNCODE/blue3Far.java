@@ -14,14 +14,15 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "blue3Far", group = "Autonomous")
+@Autonomous(name = "blue3Far \uD83D\uDFE6", group = "Autonomous")
 @Configurable // Panels
 public class blue3Far extends Base_Robot_Auto {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
     private Paths paths; // Paths defined in the Paths class
     boolean gateHoldTimerUsed = false;
+    double waitTime=0;
+    boolean isIncrementing = false;
 
-double waitTime = 0;
 
     @Override
     public void init(){
@@ -33,8 +34,7 @@ double waitTime = 0;
         follower.setMaxPower(0.975);
         timer = new ElapsedTime();
 
-        panelsTelemetry.debug("Status", "Initialized");
-        panelsTelemetry.update(telemetry);
+        paths = new Paths(follower); // Build paths---
         setPathState(0);
     }
     public void init_loop() {
@@ -45,19 +45,25 @@ double waitTime = 0;
         panelsTelemetry.debug("Dpad Right for 10 seconds");
         panelsTelemetry.debug("Dpad Down -1s");
         panelsTelemetry.debug("Left Bumper for 0 seconds");
-        panelsTelemetry.debug("Press start to confirm");
         panelsTelemetry.update(telemetry);
-        if (gamepad1.dpad_up) {
+        if (gamepad1.dpad_up  && !isIncrementing) {
             waitTime +=1;
+            isIncrementing = true;
         }
-        if (gamepad1.dpad_down)
+        if (gamepad1.dpad_down && !isIncrementing)
             waitTime -=1;
+        isIncrementing = true;
         if (gamepad1.dpad_left)
             waitTime = 20.5;
         if (gamepad1.dpad_right)
-            waitTime = 15;
+            waitTime = 5;
         if(gamepad1.left_bumper)
             waitTime =0;
+        if(!gamepad1.dpad_down && !gamepad1.dpad_up)
+            isIncrementing = false;
+        if(waitTime<0)
+            waitTime = 0;
+
     }
     @Override
     public void loop() {
@@ -112,16 +118,16 @@ double waitTime = 0;
     public void autonomousPathUpdate() throws InterruptedException {
         switch (pathState) {
             case 0:
-               if(!timerUsed)
-               {
-                   timer.reset();
-                   timerUsed=true;
-               }
-               if(timer.seconds()>waitTime){
-                follower.followPath(paths.Path1);
-                setPathState(1);
-                timerUsed=false;
-               }
+                if(!timerUsed)
+                {
+                    timer.reset();
+                    timerUsed=true;
+                }
+                if(timer.seconds()>waitTime){
+                    follower.followPath(paths.Path1);
+                    setPathState(1);
+                    timerUsed=false;
+                }
                 break;
             case 1:
                 if(!follower.isBusy()){
@@ -132,7 +138,7 @@ double waitTime = 0;
                 break;
             case 2:
                 if(!follower.isBusy()){
-                    launch(paths.Path2,3,0.93);
+                    launch(paths.Path2,3,0.89);
                 }
                 break;
             case 3:

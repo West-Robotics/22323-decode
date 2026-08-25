@@ -14,7 +14,7 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "blue6Gate", group = "Autonomous")
+@Autonomous(name = "blue6Gate \uD83D\uDFE6", group = "Autonomous")
 @Configurable // Panels
 public class blue6Gate extends Base_Robot_Auto {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
@@ -50,11 +50,11 @@ public class blue6Gate extends Base_Robot_Auto {
         }
 
         // Log values to Panels and Driver Station
-        panelsTelemetry.debug("Path State ", pathState);
-        panelsTelemetry.debug("is the timer being used? ", timerUsed);
-        panelsTelemetry.debug("X: ", follower.getPose().getX());
-        panelsTelemetry.debug("Y: ", follower.getPose().getY());
-        panelsTelemetry.debug("Heading: ", follower.getPose().getHeading());
+        panelsTelemetry.debug("Path State", pathState);
+        panelsTelemetry.debug("is the timer being used?", timerUsed);
+        panelsTelemetry.debug("X", follower.getPose().getX());
+        panelsTelemetry.debug("Y", follower.getPose().getY());
+        panelsTelemetry.debug("Heading", follower.getPose().getHeading());
         panelsTelemetry.update(telemetry);
     }
 
@@ -77,14 +77,14 @@ public class blue6Gate extends Base_Robot_Auto {
                             new BezierLine(
                                     new Pose(22.4, 126.3),
 
-                                    new Pose(44.5, 98)
+                                    new Pose(49, 98)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(320), Math.toRadians(320))
                     .build();
 
             Path2 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(44.5, 98),
+                                    new Pose(49, 101),
 
                                     new Pose(49, 88)
                             )
@@ -161,19 +161,19 @@ public class blue6Gate extends Base_Robot_Auto {
 
                                     new Pose(26, 74),
 
-                                    new Pose(44.5, 98)
+                                    new Pose(49, 101)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(320))
+                    ).setConstantHeadingInterpolation(Math.toRadians(325))
 
                     .build();
 
             Path10 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(44.5, 98),
+                                    new Pose(49, 101),
 
                                     new Pose(49, 120)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(320))
+                    ).setConstantHeadingInterpolation(Math.toRadians(325))
 
                     .build();
         }
@@ -187,32 +187,17 @@ public class blue6Gate extends Base_Robot_Auto {
                 setPathState(1);
                 break;
             case 1:
-            /* You could check for
-            - Follower State: "if(!follower.isBusy()) {}"
-            - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
-            - Robot Position: "if(follower.getPose().getX() > 36) {}"
-            */
-
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                    /* Score Preload */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                 if(!follower.isBusy()){
-                    //follower.breakFollowing();
+                    follower.breakFollowing();
                     // 1st Launch Here
-                    launch(paths.Path2,2,0.925);
+                    launch(paths.Path2,2);
                 }
                 break;
             case 2:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
-
-                    /* Grab Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                 if(!follower.isBusy()){
                     In.setPower(-1);
-                    Boost.setPower(0);
-                    follower.setMaxPower(0.65);
+                    Boost.setPower(-1);
+                    follower.setMaxPower(0.6);
                     follower.followPath(paths.Path3);
                     setPathState(3);
                 }
@@ -224,7 +209,7 @@ public class blue6Gate extends Base_Robot_Auto {
                     timerUsed = true;
                 }
 
-                if(!follower.isBusy() || timer.seconds()>3){
+                if(!follower.isBusy() || timer.seconds()>2.5){
                     follower.breakFollowing();
                     follower.setMaxPower(0.75);
                     sleep(500);
@@ -236,52 +221,45 @@ public class blue6Gate extends Base_Robot_Auto {
                 }
                 break;
             case 4:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
-                    /* Grab Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                 if(!follower.isBusy()){
                     follower.followPath(paths.Path5);
                     setPathState(5);
                 }
                 break;
             case 5:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-
-                    /* Score Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                 if(!follower.isBusy()){
                     follower.followPath(paths.Path6);
                     setPathState(6);
                 }
                 break;
             case 6:
-                //if it can't get to the gate, just give up and go launch
+                //if it can't finish the path, just give up and do the next path
+                follower.setMaxPower(0.45);
                 if (!timerUsed){
                     timer.reset();
                     timerUsed = true;
                 }
-                if (timer.seconds()>3){
-                    follower.followPath(paths.Path7);
-                    setPathState(7);
-                    timerUsed = false;
-                }
-
-                if(!follower.isBusy()){
-                    //follower.breakFollowing();
-                    //shorter wait here for sync
+//                if (timer.seconds()>3){
+//                    follower.followPath(paths.Path7);
+//                    setPathState(7);
+//                    timerUsed = false;
+//                    follower.setMaxPower(0.75);
+//                }
+                //Switch from moving to holding open the gate without moving.
+                if(!follower.isBusy() || timer.seconds()>2){
+                    follower.breakFollowing();
                     if (!gateHoldTimerUsed){
                         gateHoldTimer.reset();
                         gateHoldTimerUsed = true;
                     }
 
                 }
-                if(gateHoldTimerUsed && gateHoldTimer.seconds() > 3){
+                if(gateHoldTimerUsed && gateHoldTimer.seconds() > 2.25){
                     timerUsed = false;
                     gateHoldTimerUsed = false;
                     follower.followPath(paths.Path7);
                     setPathState(7);
+                    follower.setMaxPower(0.75);
                 }
                 break;
             case 7:
@@ -293,29 +271,17 @@ public class blue6Gate extends Base_Robot_Auto {
                     setPathState(9);
                 }
                 break;
-            /* case 8:
-                if(!follower.isBusy()){
-                    follower.followPath(paths.Path9);
-                    setPathState(9);
-                }
-                break; */
+
             case 9:
                 if(!follower.isBusy()){
+                    follower.breakFollowing();
                     //follower.breakFollowing();
-                    launch(paths.Path10,10,0.925);
+                    launch(paths.Path10,10);
                 }
                 break;
             case 10:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                    /* Set the state to a Case we won't use or define, so it just stops running n new paths */
-                    setPathState(-1);
+                setPathState(-1);
                 break;
         }
     }
-
-    /** These change the states of the paths and actions. It will also reset the timers of the individual switches **/
-    public void setPathState(int pState) {
-        pathState = pState;
-    }
 }
-    

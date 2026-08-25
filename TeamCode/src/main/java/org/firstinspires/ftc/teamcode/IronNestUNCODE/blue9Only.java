@@ -15,7 +15,7 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "blue9Only", group = "Autonomous")
+@Autonomous(name = "blue9Only \uD83D\uDFE6", group = "Autonomous")
 @Configurable // Panels
 public class blue9Only extends Base_Robot_Auto {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
@@ -130,7 +130,7 @@ public class blue9Only extends Base_Robot_Auto {
 
                                     new Pose(49, 101)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(320))
+                    ).setConstantHeadingInterpolation(Math.toRadians(325))
 
                     .build();
 
@@ -181,7 +181,7 @@ public class blue9Only extends Base_Robot_Auto {
 
                                     new Pose(49, 101)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(320))
+                    ).setConstantHeadingInterpolation(Math.toRadians(325))
 
                     .build();
             //leave
@@ -191,7 +191,7 @@ public class blue9Only extends Base_Robot_Auto {
 
                                     new Pose(49, 120)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(320))
+                    ).setConstantHeadingInterpolation(Math.toRadians(325))
 
                     .build();
         }
