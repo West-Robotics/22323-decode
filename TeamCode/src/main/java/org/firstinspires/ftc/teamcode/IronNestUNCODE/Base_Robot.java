@@ -23,11 +23,9 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.List;
-import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 @Configurable
