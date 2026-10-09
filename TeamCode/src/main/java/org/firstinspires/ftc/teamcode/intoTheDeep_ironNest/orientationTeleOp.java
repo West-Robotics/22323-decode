@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.intoTheDeep_ironNest;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.util.control.Controller;
 
 @TeleOp
+@Disabled
 public class orientationTeleOp extends LinearOpMode {
     public DcMotor leftFront;
     public DcMotor leftBack;

@@ -30,12 +30,20 @@ import java.util.concurrent.TimeUnit;
 
 @Configurable
 public abstract class  Base_Robot extends LinearOpMode {
+
+    public  static boolean flag = false;
+    static int iteration=0;
+    public  static com.pedropathing.util.Timer servoTimer = new com.pedropathing.util.Timer();
     public static double MAX_AUTO_TURN = 0.6, MAX_AUTO_STRAFE = 0.5, MAX_AUTO_SPEED = 1;
     public static double DESIRED_DISTANCE = 48,SPEED_GAIN = 0.025,TURN_GAIN = 0.01;
     public static double flywheelk_P = 0.001,flywheelk_D = 0.0000000000001, flywheelk_i = 0.0001;
     private static double STRAFE_GAIN = 0.015;
-    public DcMotorEx FR, FL, BR, BL, OutL, OutR, In;
+    public DcMotorEx FR, FL, BR, BL, OutL, OutR, In,Boost;
     public VisionPortal visionPortal;
+
+    public static double servoUpPosition = 0.045;
+
+    public static double servoDownPosition = 0.3;
     final boolean USE_WEBCAM = true;
     public static final int DESIRED_TAG_ID = -1;
     public AprilTagDetection desiredTag;
@@ -57,7 +65,7 @@ public abstract class  Base_Robot extends LinearOpMode {
     - calibrate the camera using the tutorial found here: https://ftc-docs.firstinspires.org/en/latest/programming_resources/vision/camera_calibration/camera-calibration.html
     - test and run teleop. make sure nothing is inverted and basic functionality works
     - test auto aim:
-      - graph the variables in ftc panels and get a sense of what is happening and why the auto aim keeps going straight into the apriltag even after reaching desired distance
+    - graph the variables in ftc panels and get a sense of what is happening and why the auto aim keeps going straight into the apriltag even after reaching desired distance
 
      */
 
@@ -69,13 +77,15 @@ public abstract class  Base_Robot extends LinearOpMode {
         this.liftL = hardwareMap.get(Servo.class, "LiftL");
         this.liftR = hardwareMap.get(Servo.class, "LiftR");
         this.In = hardwareMap.get(DcMotorEx.class, "intake");
+        this.Boost = hardwareMap.get(DcMotorEx.class,"booster");
         this.OutL = hardwareMap.get(DcMotorEx.class, "outtakeL");
         this.OutR = hardwareMap.get(DcMotorEx.class, "outtakeR");
 
-        FR.setDirection(DcMotorSimple.Direction.REVERSE);
-        BR.setDirection(DcMotorSimple.Direction.REVERSE);
-        FL.setDirection(DcMotorSimple.Direction.FORWARD);
-        BL.setDirection(DcMotorSimple.Direction.FORWARD);
+        FR.setDirection(DcMotorSimple.Direction.FORWARD);
+        BR.setDirection(DcMotorSimple.Direction.FORWARD);
+        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+        BL.setDirection(DcMotorSimple.Direction.REVERSE);
+        Boost.setDirection(DcMotorSimple.Direction.REVERSE);
         OutL.setDirection(DcMotorSimple.Direction.REVERSE);
 
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -122,7 +132,7 @@ public abstract class  Base_Robot extends LinearOpMode {
         double currentLeftVelocity = OutL.getVelocity();
         double currentRightVelocity = OutR.getVelocity();
         // Calculate the power adjustment using the PID controllers
-        if (gamepad1.right_trigger>0) {
+        if (gamepad1.right_trigger>0.2 || gamepad1.right_bumper) {
             leftFlywheelPower = leftFlywheelController.performPID(currentLeftVelocity);
             rightFlywheelPower = rightFlywheelController.performPID(currentRightVelocity);
             // Apply the calculated power to the motors
@@ -136,21 +146,47 @@ public abstract class  Base_Robot extends LinearOpMode {
 
     }
     public void manageIntake(){
-        if(gamepad1.left_trigger>.2||gamepad2.left_trigger>.2){
+        if(gamepad1.left_trigger>.2||gamepad2.left_trigger>.2 || gamepad1.right_trigger>0.2){
             In.setPower(-1);
-        }else if(gamepad1.left_bumper||gamepad2.left_bumper){
-            In.setPower(0.25);
+            Boost.setPower(-1);
         }else{
             In.setPower(0);
+            Boost.setPower(0);
         }
     }
     public void manage_servos(){
-        if(gamepad1.a){
-            liftL.setPosition(0.01);
-            liftR.setPosition(0.99);
-        }else {
-            liftR.setPosition(0.785);
-            liftL.setPosition(0.215);
+        if(gamepad1.y){
+            liftL.setPosition(servoUpPosition);
+            liftR.setPosition(1.03 - servoUpPosition);
+            flag = false;
+        }if(gamepad1.x) {
+            liftR.setPosition(1.03 - servoDownPosition);
+            liftL.setPosition(servoDownPosition);
+            flag = false;
+        }
+        if((gamepad1.a || gamepad1.right_trigger>0.2) && !flag){
+            flag = true;
+            servoTimer.resetTimer();
+            iteration=0;
+        }
+        if(flag){
+            if(servoTimer.getElapsedTimeSeconds() >= 0.4){
+                iteration = 1;
+            }
+            if(servoTimer.getElapsedTimeSeconds() >= 0.8){
+                iteration = 2;
+            }
+           if(servoTimer.getElapsedTimeSeconds() >= 0.8){
+                flag = false;
+            }
+            if(iteration == 0){
+            liftL.setPosition(servoUpPosition);
+            liftR.setPosition(1.03 - servoUpPosition);
+            }
+            if(iteration == 1){
+            liftR.setPosition(1.03 - servoDownPosition);
+            liftL.setPosition(servoDownPosition);
+            }
         }
     }
     public void init_vision() {

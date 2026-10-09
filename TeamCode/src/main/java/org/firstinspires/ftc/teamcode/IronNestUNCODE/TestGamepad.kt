@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode.IronNestUNCODE
 import com.bylazar.gamepad.PanelsGamepad
 // Use this import for the telemetry manager
 import com.bylazar.telemetry.PanelsTelemetry
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 
 @TeleOp(name = "Test Gamepad", group = "Dev")
+@Disabled
 class TestGamepad : OpMode() {
     private val g1 = PanelsGamepad.firstManager
     private val g2 = PanelsGamepad.secondManager

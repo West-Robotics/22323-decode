@@ -16,7 +16,7 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "red6Only", group = "Autonomous")
+@Autonomous(name = "red6Only \uD83D\uDFE5", group = "Autonomous")
 @Configurable // Panels
 public class red6Only extends Base_Robot_Auto {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
@@ -175,24 +175,26 @@ public class red6Only extends Base_Robot_Auto {
                 /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                 if(!follower.isBusy()){
                     In.setPower(-1);
+                    Boost.setPower(-1);
                     follower.setMaxPower(0.6);
                     follower.followPath(paths.Path3);
                     setPathState(3);
                 }
                 break;
             case 3:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                /* Score Sample */
+                //if it can't finish the path, just give up and do the next path
+                if (!timerUsed){
+                    timer.reset();
+                    timerUsed = true;
+                }
 
-
-                /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                if(!follower.isBusy()){
+                if(!follower.isBusy() || timer.seconds()>3){
                     follower.breakFollowing();
                     follower.setMaxPower(0.75);
                     sleep(500);
-                    In.setPower(0.2);
-                    sleep(600);
                     In.setPower(0);
+                    Boost.setPower(0);
+                    timerUsed = false;
                     follower.followPath(paths.Path4);
                     setPathState(4);
                 }

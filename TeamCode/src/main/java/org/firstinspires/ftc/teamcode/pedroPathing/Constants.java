@@ -20,16 +20,16 @@ public class Constants {
             .translationalPIDFCoefficients(new PIDFCoefficients(0.1,0, 0.01, 0.025))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.025,0.0,0.0001,0.6,0.01))
 
-            .mass(8.5);
+            .mass(11);
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.95, 0.6);
     public static TwoWheelConstants localizerConstants = new TwoWheelConstants()
             .forwardEncoderDirection(Encoder.FORWARD)
-            .strafeEncoderDirection(Encoder.REVERSE)
-            .strafePodX(-8.66)
-            .forwardPodY(-4.15)
-            .forwardEncoder_HardwareMapName("deadForward")
-            .strafeEncoder_HardwareMapName("intake")
+            .strafeEncoderDirection(Encoder.FORWARD)
+            .strafePodX(-7.805)
+            .forwardPodY(-3.695)
+            .forwardEncoder_HardwareMapName("BackR")
+            .strafeEncoder_HardwareMapName("FrontR")
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(
                     new RevHubOrientationOnRobot(
@@ -37,8 +37,8 @@ public class Constants {
                             RevHubOrientationOnRobot.UsbFacingDirection.UP
                     )
             )
-            .forwardTicksToInches(0.0010691117487182642)
-            .strafeTicksToInches(0.0010707274090402423);
+            .forwardTicksToInches(0.001998805694127871)
+            .strafeTicksToInches(0.001989460559462039);
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .twoWheelLocalizer(localizerConstants)
@@ -53,10 +53,10 @@ public class Constants {
             .rightRearMotorName("BackR")
             .leftRearMotorName("BackL")
             .leftFrontMotorName("FrontL")
-            .leftFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .xVelocity(66.47046712596801)
             .yVelocity(53.260846037344244)
-            .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE);
+            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
 }

@@ -8,14 +8,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.TelemetryManager;
 import com.bylazar.telemetry.PanelsTelemetry;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "red9Only", group = "Autonomous")
+@Autonomous(name = "red9Only \uD83D\uDFE5", group = "Autonomous")
 @Configurable // Panels
 public class red9Only extends Base_Robot_Auto {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
@@ -27,7 +27,6 @@ public class red9Only extends Base_Robot_Auto {
         pathTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(-22.4,126.3, Math.toRadians(220)));
-        follower.setMaxPower(1);
         timer = new ElapsedTime();
 
         paths = new Paths(follower); // Build paths
@@ -128,7 +127,7 @@ public class red9Only extends Base_Robot_Auto {
 
                                     new Pose(-49, 101)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(220))
+                    ).setConstantHeadingInterpolation(Math.toRadians(225))
 
                     .build();
 
@@ -179,7 +178,7 @@ public class red9Only extends Base_Robot_Auto {
 
                                     new Pose(-49, 101)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(220))
+                    ).setConstantHeadingInterpolation(Math.toRadians(225))
 
                     .build();
             //leave
@@ -189,7 +188,7 @@ public class red9Only extends Base_Robot_Auto {
 
                                     new Pose(-49, 120)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(220))
+                    ).setConstantHeadingInterpolation(Math.toRadians(225))
 
                     .build();
         }
@@ -199,6 +198,7 @@ public class red9Only extends Base_Robot_Auto {
     public void autonomousPathUpdate() throws InterruptedException {
         switch (pathState) {
             case 0:
+                follower.setMaxPower(0.75);
                 follower.followPath(paths.Path1);
                 setPathState(1);
                 break;
@@ -217,7 +217,7 @@ public class red9Only extends Base_Robot_Auto {
                 if(!follower.isBusy()){
                     follower.breakFollowing();
                     // 1st Launch Here
-                    launch(paths.Path2,2,0.93);
+                    launch(paths.Path2,2);
                 }
                 break;
             case 2:
@@ -228,24 +228,26 @@ public class red9Only extends Base_Robot_Auto {
                 /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                 if(!follower.isBusy()){
                     In.setPower(-1);
+                    Boost.setPower(-1);
                     follower.setMaxPower(0.6);
                     follower.followPath(paths.Path3);
                     setPathState(3);
                 }
                 break;
             case 3:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                /* Score Sample */
+                //if it can't finish the path, just give up and do the next path
+                if (!timerUsed){
+                    timer.reset();
+                    timerUsed = true;
+                }
 
-
-                /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                if(!follower.isBusy()){
+                if(!follower.isBusy() || timer.seconds()>2.5){
                     follower.breakFollowing();
                     follower.setMaxPower(0.75);
                     sleep(500);
-                    In.setPower(0.2);
-                    sleep(600);
                     In.setPower(0);
+                    Boost.setPower(0);
+                    timerUsed = false;
                     follower.followPath(paths.Path4);
                     setPathState(4);
                 }
@@ -275,17 +277,25 @@ public class red9Only extends Base_Robot_Auto {
             case 10:
                 if(!follower.isBusy()){
                     In.setPower(-1);
+                    Boost.setPower(-1);
                     follower.followPath(paths.Path11);
                     setPathState(11);
                 }
                 break;
             case 11:
-                if(!follower.isBusy()){
+                //if it can't finish the path, just give up and do the next path
+                if (!timerUsed){
+                    timer.reset();
+                    timerUsed = true;
+                }
+
+                if(!follower.isBusy() || timer.seconds()>3.5){
                     follower.breakFollowing();
+                    follower.setMaxPower(0.75);
                     sleep(500);
-                    In.setPower(0.2);
-                    sleep(600);
                     In.setPower(0);
+                    Boost.setPower(0);
+                    timerUsed = false;
                     follower.followPath(paths.Path12);
                     setPathState(12);
                 }

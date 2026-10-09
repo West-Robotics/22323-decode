@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.IronNestUNCODE;
 
-import android.health.connect.datatypes.units.Power;
+import static java.lang.Thread.sleep;
+
 import android.util.Size;
 
 import com.bylazar.camerastream.PanelsCameraStream;
@@ -11,7 +12,6 @@ import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -20,8 +20,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.teamcode.util.control.PIDController;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -32,18 +30,18 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Configurable
 public abstract class  Base_Robot_Auto extends OpMode {
-    public Follower follower; boolean timerUsed = false; private int iteration = 0;
+    public Follower follower; boolean timerUsed = false;
+    private int iteration = 0;
     public int pathState;    public Timer pathTimer, actionTimer, opmodeTimer; // Timer for autonomous paths
-    public ElapsedTime timer;
+    public  ElapsedTime timer;
     public static double MAX_AUTO_TURN = 0.6, MAX_AUTO_STRAFE = 0.5, MAX_AUTO_SPEED = 1;
     public static double DESIRED_DISTANCE = 48,SPEED_GAIN = 0.025,TURN_GAIN = 0.01;
     public static double flywheelk_P = 0.001,flywheelk_D = 0.0000000000001, flywheelk_i = 0.0001;
     private static double STRAFE_GAIN = 0.015;
-    public DcMotorEx FR, FL, BR, BL, OutL, OutR, In;
+    public DcMotorEx FR, FL, BR, BL, OutL, OutR, In, Boost;
     public VisionPortal visionPortal;
     final boolean USE_WEBCAM = true;
     public static final int DESIRED_TAG_ID = -1;
@@ -60,79 +58,90 @@ public abstract class  Base_Robot_Auto extends OpMode {
     public GamepadManager g2_panels_manager;
     public double rangeError, headingError, yawError;
     public double drive,turn,strafe;
-    public AprilTagStreamProcessor apriltagStreamProcessor;
-    /*
-    TO DO:
-    - calibrate the camera using the tutorial found here: https://ftc-docs.firstinspires.org/en/latest/programming_resources/vision/camera_calibration/camera-calibration.html
-    - test and run teleop. make sure nothing is inverted and basic functionality works
-    - test auto aim:
-      - graph the variables in ftc panels and get a sense of what is happening and why the auto aim keeps going straight into the apriltag even after reaching desired distance
+    public static double servoUpPosition = 0.030;
 
-     */
+    public static double servoDownPosition = 0.3;
+    public AprilTagStreamProcessor apriltagStreamProcessor;
+    boolean extraLaunch = true;
+
+
+    public void leave(){
+        if(!timerUsed){timer = new ElapsedTime();timerUsed = true;}
+        if(timer.milliseconds() >= 750){FL.setPower(0);FR.setPower(0);BL.setPower(0);BR.setPower(0);}
+        else {FL.setPower(-0.5);FR.setPower(-0.5);BL.setPower(-0.5);BR.setPower(-0.5);}
+    }
     public void setPathState(int pState) {
         pathState = pState;
     }
 
-    public void launch(PathChain path, int nextPath){
+    public void launch(PathChain path, int nextPath) throws InterruptedException {
         if (!timerUsed){
             timer.reset();
             iteration = 0;
             timerUsed = true;
         }
         if (timer.seconds()<0.4){;
-            liftL.setPosition(0.01);
-            liftR.setPosition(0.99);
+            liftL.setPosition(servoUpPosition);
+            liftR.setPosition(1.03-servoUpPosition);
             telemetry.addData("Status", "Outtake");
             OutL.setPower(0.95); OutR.setPower(0.95);
+            Boost.setPower(-1);
         }else if (timer.seconds()>0.96) {
             timer.reset();
             iteration += 1;
             telemetry.addData("Status", "Outtake Complete");
             if(iteration == 1) {
                 In.setPower(-1);
+                Boost.setPower(-1);
             }
-            if(iteration == 3) {
+            if((iteration == 3 && !extraLaunch) || (iteration == 4 && extraLaunch)) {
                 OutL.setPower(0); OutR.setPower(0);
                 In.setPower(0);
+                Boost.setPower(0);
                 timerUsed = false;
+                extraLaunch = false;
                 follower.followPath(path);
                 setPathState(nextPath);
             }
 
         } else {
-            liftL.setPosition(0.22);
-            liftR.setPosition(0.78);
+            liftL.setPosition(servoDownPosition);
+            liftR.setPosition(1.03-servoDownPosition);
         }
     }
-    public void launch(PathChain path, int nextPath,double power){
+    public void launch(PathChain path, int nextPath,double power) throws InterruptedException{
         if (!timerUsed){
             timer.reset();
             iteration = 0;
             timerUsed = true;
         }
         if (timer.seconds()<0.4){;
-            liftL.setPosition(0.01);
-            liftR.setPosition(0.99);
-            telemetry.addData("Status", "Outtake");
+            liftL.setPosition(servoUpPosition);
+            liftR.setPosition(1.03-servoUpPosition);
+            telemetry.addData("Status ", "Outtake");
             OutL.setPower(power); OutR.setPower(power);
+            Boost.setPower(-1);
         }else if (timer.seconds()>0.96) {
             timer.reset();
             iteration += 1;
-            telemetry.addData("Status", "Outtake Complete");
+            telemetry.addData("Status ", "Outtake Complete");
             if(iteration == 1) {
                 In.setPower(-1);
+                Boost.setPower(-1);
             }
-            if(iteration == 3) {
+            if((iteration == 3 && !extraLaunch) || (iteration == 4 && extraLaunch)) {
                 OutL.setPower(0); OutR.setPower(0);
                 In.setPower(0);
+                Boost.setPower(0);
                 timerUsed = false;
+                extraLaunch = false;
                 follower.followPath(path);
                 setPathState(nextPath);
             }
 
         } else {
-            liftL.setPosition(0.22);
-            liftR.setPosition(0.78);
+            liftL.setPosition(servoDownPosition);
+            liftR.setPosition(1.03-servoDownPosition);
         }
     }
     public void init_motor(){
@@ -145,12 +154,14 @@ public abstract class  Base_Robot_Auto extends OpMode {
         this.In = hardwareMap.get(DcMotorEx.class, "intake");
         this.OutL = hardwareMap.get(DcMotorEx.class, "outtakeL");
         this.OutR = hardwareMap.get(DcMotorEx.class, "outtakeR");
+        this.Boost = hardwareMap.get(DcMotorEx.class, "booster");
 
         FR.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
         FL.setDirection(DcMotorSimple.Direction.FORWARD);
         BL.setDirection(DcMotorSimple.Direction.FORWARD);
         OutL.setDirection(DcMotorSimple.Direction.REVERSE);
+        Boost.setDirection(DcMotorSimple.Direction.REVERSE);
 
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
