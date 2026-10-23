@@ -1,24 +1,47 @@
 package org.firstinspires.ftc.teamcode.IronNestBEE;
+
 import static com.pedropathing.ivy.Scheduler.schedule;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.ivy.groups.Groups;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-@TeleOp(name = "IvyTest", group = "TeleOp")
+@TeleOp(name = "BetoWork", group = "TeleOp")
 @Configurable
 public class BeeWorkInstructions extends OpMode {
+    private DriveTrain bee;
+    private Launcher Ln;
+    private Tollbooth Tb;
+    private Intake In;
+    private FlowerThingy FT;
+    private Hood doomAndDespair;
+
     @Override
     public void init() {
         Scheduler.reset();
-        DriveTrain bee = new DriveTrain(hardwareMap);
-        // Schedule the default drive command to run in a loop
+
+        // 2. Initialize them here using hardwareMap
+        bee = new DriveTrain(hardwareMap);
+        Ln = new Launcher(hardwareMap);
+        Tb = new Tollbooth(hardwareMap);
+        In = new Intake(hardwareMap);
+        FT = new FlowerThingy(hardwareMap);
+        doomAndDespair = new Hood(hardwareMap);
+    }
+
+    @Override
+    public void start() {
         schedule(
                 Groups.loop(
                         bee.Drive(gamepad1)
-                ));
+                                .with(Ln.Launch(gamepad1))
+                                .with(Tb.Hold(gamepad1))
+                                .with(In.IntakeIt(gamepad1))
+                                .with(FT.upDown(gamepad1))
+                                .with(doomAndDespair.block(gamepad1))
+                )
+        );
     }
 
     @Override

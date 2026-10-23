@@ -30,15 +30,17 @@ public class Launcher {
     public Command Launch(Gamepad gamepad){
         return Command.build()
                 .setExecute(()->{
-                    if(gamepad.right_trigger>.2 || gamepad.left_trigger>.2) {
+                    if(gamepad.right_trigger>.2) {
                         this.spin();
                     }else{
                         this.stop();
                     }
-                    if(gamepad.a){
+                    if(gamepad.dpad_down){
+                        //pollen position
                         LaunchAdjust.setPosition(0.8);
                     }
-                    if(gamepad.y){
+                    if(gamepad.dpad_up){
+                        //nectar position
                         LaunchAdjust.setPosition(0.1);
                     }
                         }).requiring(this);
