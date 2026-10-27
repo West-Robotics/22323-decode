@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class FlowerThingy {
     private final Servo swivel;
     public FlowerThingy(HardwareMap hardwareMap){
-        swivel = hardwareMap.get(Servo.class, "swivel");
+        swivel = hardwareMap.get(Servo.class, "hockeyL");
     }
     public void up(){
         swivel.setPosition(0.75);

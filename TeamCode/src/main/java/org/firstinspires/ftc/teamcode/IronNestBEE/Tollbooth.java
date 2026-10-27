@@ -10,13 +10,13 @@ import javax.tools.Tool;
 public class Tollbooth {
     private final Servo servo;
     public Tollbooth(HardwareMap hardwareMap){
-        servo = hardwareMap.get(Servo.class, "tollbooth");
+        servo = hardwareMap.get(Servo.class, "tollBoothL");
     }
     public void open(){
-        servo.setPosition(1);
+        servo.setPosition(0.2);
     }
     public void close(){
-        servo.setPosition(0);
+        servo.setPosition(0.575);
     }
     public Command Hold(Gamepad gamepad){
         return Command.build()

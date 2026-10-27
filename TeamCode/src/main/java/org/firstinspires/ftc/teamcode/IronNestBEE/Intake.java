@@ -8,16 +8,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Intake {
 private final DcMotorEx Intake;
 public Intake(HardwareMap hardwareMap){
-    Intake = hardwareMap.get(DcMotorEx.class, "Intake");
+    Intake = hardwareMap.get(DcMotorEx.class, "intake");
 }
 public void spin(){
-    Intake.setPower(1);
+    Intake.setPower(-1);
 }
 public void stop(){
     Intake.setPower(0);
 }
 public void spinBack(){
-    Intake.setPower(-1);
+    Intake.setPower(1);
 }
 public void spin(double power){
     Intake.setPower(power);

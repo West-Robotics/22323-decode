@@ -17,12 +17,12 @@ public class Launcher {
      * @param hardwareMap The OpMode's hardware map.
      */
     public Launcher(HardwareMap hardwareMap) {
-        Flywheel = hardwareMap.get(DcMotorEx.class, "Launcher");
-        LaunchAdjust = hardwareMap.get(Servo.class, "Launch Adjust");
+        Flywheel = hardwareMap.get(DcMotorEx.class, "launcher");
+        LaunchAdjust = hardwareMap.get(Servo.class, "launchAdjust");
         Flywheel.setDirection(DcMotorSimple.Direction.FORWARD);
     }
     public void spin() {
-        Flywheel.setPower(-1);
+        Flywheel.setPower(1);
     }
     public void stop(){
         Flywheel.setPower(0);
@@ -37,11 +37,15 @@ public class Launcher {
                     }
                     if(gamepad.dpad_down){
                         //pollen position
-                        LaunchAdjust.setPosition(0.8);
+                        LaunchAdjust.setPosition(0.95);
                     }
                     if(gamepad.dpad_up){
                         //nectar position
-                        LaunchAdjust.setPosition(0.1);
+                        LaunchAdjust.setPosition(0.463);
+                    }
+                    if(gamepad.dpad_right){
+                        //receiving position
+                        LaunchAdjust.setPosition(0.081);
                     }
                         }).requiring(this);
     }
