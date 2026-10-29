@@ -39,8 +39,8 @@ public class shoot4Leave extends OpMode {
         // 2. Initialize them here using hardwareMap
         bee = new DriveTrain(hardwareMap);
         Ln = new Launcher(hardwareMap);
-        TbL = new Tollbooth(hardwareMap);
-        TbR = new Tollbooth(hardwareMap);
+        TbL = new Tollbooth(hardwareMap,false);
+        TbR = new Tollbooth(hardwareMap,true);
         In = new Intake(hardwareMap);
     }
     @Override

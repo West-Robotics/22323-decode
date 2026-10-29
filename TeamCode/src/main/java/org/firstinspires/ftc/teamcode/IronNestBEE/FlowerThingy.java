@@ -11,7 +11,7 @@ public class FlowerThingy {
         swivel = hardwareMap.get(Servo.class, "hockeyL");
     }
     public void up(){
-        swivel.setPosition(0.75);
+        swivel.setPosition(0.55);
     }
     public void down(){
         swivel.setPosition(0);
@@ -19,9 +19,9 @@ public class FlowerThingy {
     public Command upDown(Gamepad gamepad){
         return Command.build()
                 .setExecute(()->{
-                    if(gamepad.b){
+                    if(gamepad.y){
                         this.up();
-                    } else if (gamepad.y) {
+                    } else if (gamepad.b) {
                         this.down();
                     }
 

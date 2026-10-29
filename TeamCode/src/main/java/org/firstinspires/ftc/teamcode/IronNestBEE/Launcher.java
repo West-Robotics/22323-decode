@@ -23,14 +23,14 @@ public class Launcher {
         LaunchAdjust = hardwareMap.get(Servo.class, "launchAdjust");
         Flywheel.setDirection(DcMotorSimple.Direction.FORWARD);
     }
-    public void spin() {Flywheel.setPower(0.8);}
+    public void spin() {Flywheel.setPower(0.93);}
     public void stop(){
         Flywheel.setPower(0);
     }
     public Command Launch(Gamepad gamepad){
         return Command.build()
                 .setExecute(()->{
-                    if(gamepad.right_trigger>.2) {
+                    if(gamepad.right_trigger>.2 || gamepad.x) {
                         this.spin();
                     }else{
                         this.stop();
@@ -41,11 +41,11 @@ public class Launcher {
                     }
                     if(gamepad.dpad_up){
                         //nectar position
-                        LaunchAdjust.setPosition(0.463);
+                        LaunchAdjust.setPosition(0.48);
                     }
                     if(gamepad.dpad_right){
                         //receiving position
-                        LaunchAdjust.setPosition(0.081);
+                        LaunchAdjust.setPosition(0.22);
                     }
                         }).requiring(this);
     }

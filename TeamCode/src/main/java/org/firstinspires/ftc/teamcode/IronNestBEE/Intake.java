@@ -33,7 +33,7 @@ public void setSpeed(double speed){
 public Command IntakeIt(Gamepad gamepad){
     return Command.build()
             .setExecute(()->{
-                if(gamepad.left_trigger>.2){
+                if(gamepad.left_trigger>.2 || gamepad.right_trigger>.2){
                     this.spin();
                 }else{
                     this.stop();

@@ -17,10 +17,10 @@ public class Hood {
         hood.setPwmRange(range);
     }
     public void up() {
-        hood.setPosition(0.8);
+        hood.setPosition(0.95);
     }
     public void down() {
-        hood.setPosition(0);
+        hood.setPosition(0.1);
     }
     public Command block(Gamepad gamepad) {
         return Command.build()

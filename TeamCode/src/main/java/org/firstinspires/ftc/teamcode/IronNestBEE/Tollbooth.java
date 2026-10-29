@@ -11,6 +11,8 @@ import javax.tools.Tool;
 public class Tollbooth {
     private final Servo servo;
     private Timer timer;
+    private boolean timerUsed;
+
     public Tollbooth(HardwareMap hardwareMap, boolean inverse){
         if(inverse) {
             servo = hardwareMap.get(Servo.class, "tollBoothL");
@@ -28,18 +30,32 @@ public class Tollbooth {
     }
     public void close(boolean inverse){
         if(inverse) {
-            servo.setPosition(0.575);
+            servo.setPosition(0.525);
         }else{
-            servo.setPosition(0.2);
+            servo.setPosition(0.25);
         }
     }
     public Command Hold(Gamepad gamepad, boolean inverse){
         return Command.build()
                 .setExecute(()->{
-                    if(gamepad.a){
+                    if(gamepad.a || gamepad.right_trigger>.2){
+
+                       /*
+                        if(!timerUsed){
+                            timer.reset();
+                            timerUsed = true;
+                        }
+                        if(timer.seconds() > 1 || gamepad.a) {
+                            this.open(inverse);
+                        }
+                        */
+
+                        //Temporary until we can get timer working
                         this.open(inverse);
+
                     }else{
                         this.close(inverse);
+                        timerUsed = false;
                     }
                 }).requiring(this);
     }
