@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.IronNestBEE;
 
 import com.pedropathing.ivy.Command;
+import com.pedropathing.utils.Timer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Launcher {
     private final DcMotorEx Flywheel;
     private final Servo LaunchAdjust;
+    private Timer timer;
 
     /**
      * Initialize all things related to launching here
@@ -21,9 +23,7 @@ public class Launcher {
         LaunchAdjust = hardwareMap.get(Servo.class, "launchAdjust");
         Flywheel.setDirection(DcMotorSimple.Direction.FORWARD);
     }
-    public void spin() {
-        Flywheel.setPower(1);
-    }
+    public void spin() {Flywheel.setPower(0.8);}
     public void stop(){
         Flywheel.setPower(0);
     }
@@ -48,6 +48,18 @@ public class Launcher {
                         LaunchAdjust.setPosition(0.081);
                     }
                         }).requiring(this);
+    }
+    public Command autoLaunch(){
+        timer = new Timer();
+        return Command.build()
+                .setExecute(this::spin)
+                .requiring(this);
+    }
+    public Command autoLaunchStop(){
+        timer = new Timer();
+        return Command.build()
+                .setExecute(this::stop)
+                .requiring(this);
     }
     public double getSpeed(){
        return Flywheel.getVelocity();

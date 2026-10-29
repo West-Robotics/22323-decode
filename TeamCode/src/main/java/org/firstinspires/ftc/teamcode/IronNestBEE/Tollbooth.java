@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.IronNestBEE;
 
 import com.pedropathing.ivy.Command;
+import com.pedropathing.utils.Timer;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -9,23 +10,46 @@ import javax.tools.Tool;
 
 public class Tollbooth {
     private final Servo servo;
-    public Tollbooth(HardwareMap hardwareMap){
-        servo = hardwareMap.get(Servo.class, "tollBoothL");
+    private Timer timer;
+    public Tollbooth(HardwareMap hardwareMap, boolean inverse){
+        if(inverse) {
+            servo = hardwareMap.get(Servo.class, "tollBoothL");
+        }else{
+            servo = hardwareMap.get(Servo.class, "tollBoothR");
+        }
     }
-    public void open(){
-        servo.setPosition(0.2);
+    public void open(boolean inverse){
+        if(inverse) {
+            servo.setPosition(0.2);
+        }else{
+            servo.setPosition(0.575);
+        }
+
     }
-    public void close(){
-        servo.setPosition(0.575);
+    public void close(boolean inverse){
+        if(inverse) {
+            servo.setPosition(0.575);
+        }else{
+            servo.setPosition(0.2);
+        }
     }
-    public Command Hold(Gamepad gamepad){
+    public Command Hold(Gamepad gamepad, boolean inverse){
         return Command.build()
                 .setExecute(()->{
                     if(gamepad.a){
-                        this.open();
+                        this.open(inverse);
                     }else{
-                        this.close();
+                        this.close(inverse);
                     }
                 }).requiring(this);
+    }
+    public Command autoHold(double time, boolean inverse){
+        timer = new Timer();
+        return Command.build()
+                .setStart(()->{timer.reset();})
+                .setExecute(()->{this.open(inverse);})
+                .setDone(()->timer.seconds() == time)
+                .setEnd(endCondition -> this.close(inverse))
+                .requiring(this);
     }
 }

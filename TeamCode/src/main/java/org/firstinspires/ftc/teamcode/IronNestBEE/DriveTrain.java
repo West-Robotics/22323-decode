@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.IronNestBEE;
 
 import com.pedropathing.ivy.Command;
+import com.pedropathing.utils.Timer;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -13,6 +14,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  */
 public class DriveTrain {
     private final DcMotorEx FR, FL, BR, BL;
+    private com.pedropathing.utils.Timer timer;
 
     /**
      * Initialize all motors from the hardware map.
@@ -54,6 +56,7 @@ public class DriveTrain {
         BR.setPower(backRightPower);
     }
 
+
     /**
      * Stops all drive motors.
      */
@@ -73,6 +76,22 @@ public class DriveTrain {
                     double y = -gamepad.left_stick_y;
                     double yaw = gamepad.right_stick_x;
                     drive(x, y, yaw);
+                })
+                .requiring(this);
+    }
+    public Command autoDrive(double forward,double sideways,double turn,double time){
+        timer = new Timer();
+        return Command.build()
+                .setStart(()->{
+                    timer.reset();
+                })
+                .setExecute(()-> {
+                    this.drive(sideways, forward, turn);
+                })
+                .setDone(()->timer.seconds() == time)
+                .setEnd(endCondition -> {
+                    this.stop();
+                    timer.reset();
                 })
                 .requiring(this);
     }

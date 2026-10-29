@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.IronNestBEE;
 
 import com.pedropathing.ivy.Command;
+import com.pedropathing.utils.Timer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Intake {
 private final DcMotorEx Intake;
+    private Timer timer;
 public Intake(HardwareMap hardwareMap){
     Intake = hardwareMap.get(DcMotorEx.class, "intake");
 }
@@ -38,4 +40,14 @@ public Command IntakeIt(Gamepad gamepad){
                 }
             }).requiring(this);
 }
+
+    public Command autoTake(double time){
+        timer = new Timer();
+        return Command.build()
+                .setStart(()->{timer.reset();})
+                .setExecute(this::spin)
+                .setDone(()->timer.seconds() == time)
+                .setEnd(endCondition -> this.stop())
+                .requiring(this);
+    }
 }
