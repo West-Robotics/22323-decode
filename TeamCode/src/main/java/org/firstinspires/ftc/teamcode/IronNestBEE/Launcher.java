@@ -22,11 +22,14 @@ public class Launcher {
         Flywheel = hardwareMap.get(DcMotorEx.class, "launcher");
         LaunchAdjust = hardwareMap.get(Servo.class, "launchAdjust");
         Flywheel.setDirection(DcMotorSimple.Direction.FORWARD);
-        LaunchAdjust.setPosition(0.95);
+        //LaunchAdjust.setPosition(0.95);
     }
     public void spin() {Flywheel.setPower(0.9);}
     public void stop(){
         Flywheel.setPower(0);
+    }
+    public void pollen(){
+        LaunchAdjust.setPosition(0.95);
     }
     public Command Launch(Gamepad gamepad){
         return Command.build()

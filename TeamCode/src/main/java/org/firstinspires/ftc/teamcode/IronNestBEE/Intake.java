@@ -12,6 +12,7 @@ private final DcMotorEx Intake;
 public Intake(HardwareMap hardwareMap){
     Intake = hardwareMap.get(DcMotorEx.class, "intake");
 }
+
 public void spin(){
     Intake.setPower(-1);
 }
@@ -36,6 +37,9 @@ public Command IntakeIt(Gamepad gamepad){
                 if(gamepad.left_trigger>.2 || gamepad.right_trigger>.2){
                     this.spin();
                 }else{
+                    if(gamepad.dpad_left){
+                        this.spinBack();
+                    }
                     this.stop();
                 }
             }).requiring(this);

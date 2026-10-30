@@ -35,6 +35,10 @@ public class BeeWorkInstructions extends OpMode {
 
     @Override
     public void start() {
+        FT.up();
+        TbR.close(false);
+        TbL.close(true);
+        Ln.pollen();
         schedule(
                 Groups.loop(
                         bee.Drive(gamepad1)

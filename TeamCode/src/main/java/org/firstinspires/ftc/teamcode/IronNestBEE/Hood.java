@@ -22,6 +22,7 @@ public class Hood {
     public void down() {
         hood.setPosition(0.1);
     }
+
     public Command block(Gamepad gamepad) {
         return Command.build()
                 .setExecute(() -> {

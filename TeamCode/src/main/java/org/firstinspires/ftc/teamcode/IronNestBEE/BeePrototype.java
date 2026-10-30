@@ -3,10 +3,11 @@ import static com.pedropathing.ivy.Scheduler.schedule;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.ivy.groups.Groups;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
+@Disabled
 @TeleOp(name = "Betotype", group = "TeleOp")
 @Configurable
 public class BeePrototype extends OpMode {
