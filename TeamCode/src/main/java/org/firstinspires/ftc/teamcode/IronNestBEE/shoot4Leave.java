@@ -51,7 +51,8 @@ public class shoot4Leave extends OpMode {
                         Ln.autoLaunch(),
                         In.autoTake()
                 )
-                        .then( bee.autoDrive(0,-1,0,1))
+                        .then( bee.autoDrive(0,0.4,0,0.9))
+                        .then(bee.autoDrive(-0.4,0,0,1.15))
         );
         schedule(autonomous);
     }
