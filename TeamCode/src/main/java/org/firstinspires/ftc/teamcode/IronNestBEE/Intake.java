@@ -43,7 +43,6 @@ public Command IntakeIt(Gamepad gamepad){
 
     public Command autoTake(){
         return Command.build()
-                .setStart(()->{timer.reset();})
                 .setExecute(this::spin)
                 .setEnd(endCondition -> this.stop())
                 .requiring(this);

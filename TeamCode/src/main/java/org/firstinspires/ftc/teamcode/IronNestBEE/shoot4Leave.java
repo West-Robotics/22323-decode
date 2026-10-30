@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.IronNestBEE;
 import static com.pedropathing.ivy.Scheduler.schedule;
 import static com.pedropathing.ivy.commands.Commands.*;
 import static com.pedropathing.ivy.groups.Groups.parallel;
+import static com.pedropathing.ivy.groups.Groups.race;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import com.pedropathing.ivy.Command;
+import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.utils.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -28,13 +30,19 @@ public class shoot4Leave extends OpMode {
         In = new Intake(hardwareMap);
     }
 
+    public Command waitS(double seconds) {
+        Timer timer = new Timer();
+        return Command.build()
+                .setStart(timer::reset)
+                .setDone(() -> timer.seconds() >= seconds);
+    }
     @Override
     public void start(){
         final Command autonomous = sequential(
-                        bee.autoDrive(-0.4,0,0,0.9),
-                parallel(
+                bee.autoDrive(-0.4,0,0,0.75),
+                race(
                         sequential(
-                                waitMs(150),
+                                waitS(1),
                                 parallel(
                                         TbL.autoHold(3,true),
                                         TbR.autoHold(3,false)
@@ -43,6 +51,7 @@ public class shoot4Leave extends OpMode {
                         Ln.autoLaunch(),
                         In.autoTake()
                 )
+                        .then( bee.autoDrive(0,-1,0,1))
         );
         schedule(autonomous);
     }
