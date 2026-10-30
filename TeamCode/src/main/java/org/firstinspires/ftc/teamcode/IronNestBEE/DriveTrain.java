@@ -88,7 +88,7 @@ public class DriveTrain {
                 .setExecute(()-> {
                     this.drive(sideways, forward, turn);
                 })
-                .setDone(()->timer.seconds() == time)
+                .setDone(()->timer.seconds() >= time)
                 .setEnd(endCondition -> {
                     this.stop();
                     timer.reset();

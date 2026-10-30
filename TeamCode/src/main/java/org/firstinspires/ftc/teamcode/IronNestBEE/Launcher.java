@@ -22,8 +22,9 @@ public class Launcher {
         Flywheel = hardwareMap.get(DcMotorEx.class, "launcher");
         LaunchAdjust = hardwareMap.get(Servo.class, "launchAdjust");
         Flywheel.setDirection(DcMotorSimple.Direction.FORWARD);
+        LaunchAdjust.setPosition(0.95);
     }
-    public void spin() {Flywheel.setPower(0.93);}
+    public void spin() {Flywheel.setPower(0.9);}
     public void stop(){
         Flywheel.setPower(0);
     }
@@ -50,15 +51,9 @@ public class Launcher {
                         }).requiring(this);
     }
     public Command autoLaunch(){
-        timer = new Timer();
         return Command.build()
                 .setExecute(this::spin)
-                .requiring(this);
-    }
-    public Command autoLaunchStop(){
-        timer = new Timer();
-        return Command.build()
-                .setExecute(this::stop)
+                .setEnd(endCondition -> this.stop())
                 .requiring(this);
     }
     public double getSpeed(){

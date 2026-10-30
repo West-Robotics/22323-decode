@@ -36,23 +36,20 @@ public class Tollbooth {
         }
     }
     public Command Hold(Gamepad gamepad, boolean inverse){
+        timer = new Timer();
         return Command.build()
                 .setExecute(()->{
                     if(gamepad.a || gamepad.right_trigger>.2){
 
-                       /*
                         if(!timerUsed){
                             timer.reset();
                             timerUsed = true;
                         }
-                        if(timer.seconds() > 1 || gamepad.a) {
+                        if(timer.seconds() >= 0.1 || gamepad.a) {
                             this.open(inverse);
                         }
-                        */
-
-                        //Temporary until we can get timer working
-                        this.open(inverse);
-
+//                        //Temporary until we can get timer working
+//                        this.open(inverse);
                     }else{
                         this.close(inverse);
                         timerUsed = false;
@@ -64,7 +61,7 @@ public class Tollbooth {
         return Command.build()
                 .setStart(()->{timer.reset();})
                 .setExecute(()->{this.open(inverse);})
-                .setDone(()->timer.seconds() == time)
+                .setDone(()->timer.seconds() >= time)
                 .setEnd(endCondition -> this.close(inverse))
                 .requiring(this);
     }

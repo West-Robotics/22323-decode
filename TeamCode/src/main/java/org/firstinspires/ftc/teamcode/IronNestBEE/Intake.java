@@ -41,12 +41,10 @@ public Command IntakeIt(Gamepad gamepad){
             }).requiring(this);
 }
 
-    public Command autoTake(double time){
-        timer = new Timer();
+    public Command autoTake(){
         return Command.build()
                 .setStart(()->{timer.reset();})
                 .setExecute(this::spin)
-                .setDone(()->timer.seconds() == time)
                 .setEnd(endCondition -> this.stop())
                 .requiring(this);
     }
